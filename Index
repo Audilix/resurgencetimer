@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ResurgenceTimer — Rotation Warzone Résurgence en Direct</title>
+  <meta name="description" content="Suivez en temps réel la rotation des maps Résurgence sur Warzone. Timer synchronisé mondialement — Rebirth Island et Haven's Hollow.">
+  <meta name="theme-color" content="#07090f">
+  <meta property="og:title" content="ResurgenceTimer — Maps Warzone Résurgence en Direct">
+  <meta property="og:description" content="Timer synchronisé pour tous les joueurs du monde. Rebirth Island & Haven's Hollow.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://resurgencetimer.com">
+  <link rel="canonical" href="https://resurgencetimer.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ═══════════════════════════════════════
+       DESIGN TOKENS
+    ═══════════════════════════════════════ */
+    :root {
+      --bg:    #07090f;
+      --s1:    #0d1018;
+      --s2:    #111420;
+      --bdr:   #181e2e;
+      --bdrhi: #232d45;
+
+      --gold:  #e9a520;
+      --goldb: rgba(233,165,32,.09);
+
+      /* Rebirth Island — prison island, industrial green */
+      --rb:    #35d474;
+      --rb2:   #22a558;
+      --rbb:   rgba(53,212,116,.08);
+
+      /* Haven's Hollow — Appalachian autumn town */
+      --hv:    #c4a46a;
+      --hv2:   #d4884a;
+      --hvb:   rgba(196,164,106,.08);
+
+      --red:   #e04a3a;
+      --t1:    #edf1f8;
+      --t2:    #7d90ab;
+      --t3:    #38485e;
+
+      --fd: 'Barlow Condensed', sans-serif;
+      --fb: 'DM Sans', sans-serif;
+      --fm: 'JetBrains Mono', monospace;
+      --r:  6px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--t1);
+      font-family: var(--fb);
+      font-size: .9375rem;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100dvh;
+    }
+    a { color: inherit; text-decoration: none; }
+    button { font-family: var(--fb); cursor: pointer; border: none; background: none; }
+
+    .page { max-width: 560px; margin: 0 auto; padding: 0 16px 96px; }
+
+    /* ═══════════════════════════════════════
+       HEADER
+    ═══════════════════════════════════════ */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 0 14px;
+      border-bottom: 1px solid var(--bdr);
+    }
+    .logo { font-family: var(--fd); font-weight: 900; font-size: 1.5rem; letter-spacing: .02em; }
+    .logo-dot { color: var(--gold); }
+    .logo-sub { font-family: var(--fm); font-size: .55rem; color: var(--t3); letter-spacing: .12em; display: block; margin-top: 1px; }
+    .live-chip {
+      display: flex; align-items: center; gap: 6px;
+      font-family: var(--fm); font-size: .58rem; font-weight: 700; letter-spacing: .12em;
+      color: var(--rb); background: var(--rbb);
+      border: 1px solid rgba(53,212,116,.24); padding: 4px 9px; border-radius: 3px;
+    }
+    .live-dot {
+      width: 5px; height: 5px; border-radius: 50%;
+      background: var(--rb); box-shadow: 0 0 6px var(--rb);
+      animation: pulse .9s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.2;transform:scale(.5)} }
+
+    /* ═══════════════════════════════════════
+       STATUS ROW
+    ═══════════════════════════════════════ */
+    .status-row {
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+      padding: 8px 0; border-bottom: 1px solid var(--bdr);
+      font-family: var(--fm); font-size: .6rem; color: var(--t3); letter-spacing: .05em;
+    }
+    .s-hi  { color: var(--t2); }
+    .s-sep { color: var(--bdrhi); }
+    .utc-chip {
+      margin-left: auto; display: flex; align-items: center; gap: 5px;
+      font-size: .56rem; color: var(--hv);
+      background: var(--hvb); border: 1px solid rgba(196,164,106,.2);
+      padding: 3px 7px; border-radius: 3px;
+    }
+
+    /* ═══════════════════════════════════════
+       SECTION DIVIDER
+    ═══════════════════════════════════════ */
+    .sec { display: flex; align-items: center; gap: 10px; margin: 22px 0 10px; }
+    .sec-lbl { font-family: var(--fm); font-size: .56rem; font-weight: 700; letter-spacing: .18em; color: var(--t3); white-space: nowrap; }
+    .sec-line { flex: 1; height: 1px; background: var(--bdr); }
+
+    /* ═══════════════════════════════════════
+       MAP CARD
+    ═══════════════════════════════════════ */
+    .map-card {
+      border-radius: var(--r); overflow: hidden;
+      background: var(--s1); border: 1px solid var(--bdrhi);
+      transition: border-color .5s;
+    }
+    .map-card[data-map=rebirth] { border-color: rgba(53,212,116,.30); }
+    .map-card[data-map=haven]   { border-color: rgba(196,164,106,.30); }
+
+    .map-topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 7px 13px; border-bottom: 1px solid var(--bdr);
+      background: rgba(255,255,255,.018);
+    }
+    .map-topbar-lbl { font-family: var(--fm); font-size: .54rem; letter-spacing: .14em; color: var(--t3); }
+    .map-slot-badge {
+      font-family: var(--fm); font-size: .54rem; letter-spacing: .1em;
+      color: var(--t2); border: 1px solid var(--bdrhi); padding: 2px 7px; border-radius: 3px;
+    }
+
+    /* ── MAP VISUAL ── */
+    .map-visual {
+      position: relative; height: 200px; overflow: hidden;
+    }
+
+    /* ─────────────────────────────────────────────────────────────────
+       REBIRTH ISLAND — Prison island, mer émeraude, ciel orageux
+       Palette : vert industriel, acier, rouille, eau froide
+       ─────────────────────────────────────────────────────────────────
+       NOTE : Pour utiliser votre propre screenshot (recommandé) :
+         1. Prenez un screenshot in-game ou récupérez une image promotionnelle
+         2. Placez le fichier dans /images/rebirth-island.jpg
+         3. Décommentez la ligne "background-image: url(...)" ci-dessous
+         4. Ajoutez la mention "© Activision Publishing, Inc." sur la page
+       ───────────────────────────────────────────────────────────────── */
+    .mv-rb {
+      /* background-image: url('images/rebirth-island.jpg'); background-size:cover; background-position:center top; */
+
+      /* Atmospheric CSS art — évoque l'île-prison industrielle */
+      background-color: #050e08;
+      background-image:
+        /* Gradient to bottom — fade to dark for text readability */
+        linear-gradient(to bottom,
+          rgba(5,14,8,0)    0%,
+          rgba(5,14,8,.25)  40%,
+          rgba(5,14,8,.85)  72%,
+          rgba(5,14,8,.98)  100%),
+        /* Ciel orageux — couches de nuages */
+        radial-gradient(ellipse 110% 55% at 50% 0%,   #0d2218 0%, #091a10 35%, transparent 65%),
+        radial-gradient(ellipse  70% 30% at 20% 15%,  #132b1a 0%, transparent 55%),
+        radial-gradient(ellipse  55% 25% at 80% 10%,  #0f2416 0%, transparent 50%),
+        /* Mer émeraude — reflets en bas */
+        radial-gradient(ellipse 100% 28% at 50% 100%, rgba(15,80,50,.65)  0%, transparent 70%),
+        radial-gradient(ellipse  45% 18% at 30%  95%, rgba(20,100,60,.35) 0%, transparent 60%),
+        /* Structures de l'île — silhouettes sombres */
+        radial-gradient(ellipse  18%  62% at 42%  68%, rgba(3,8,4,.92)   0%, transparent 55%),
+        radial-gradient(ellipse  12%  55% at 52%  72%, rgba(2,6,3,.88)   0%, transparent 50%),
+        radial-gradient(ellipse  28%  22% at 65%  75%, rgba(5,12,6,.75)  0%, transparent 55%),
+        /* Lueur verte diffuse — ambiance opérationnelle */
+        radial-gradient(ellipse  60%  45% at 50%  55%, rgba(30,130,70,.12) 0%, transparent 65%),
+        /* Base sombre uniforme */
+        linear-gradient(160deg, #071208 0%, #050e07 60%, #040a06 100%);
+    }
+
+    /* ─────────────────────────────────────────────────────────────────
+       HAVEN'S HOLLOW — Petite ville des Appalaches, automne
+       Palette : ambre, ocre, brume matinale, forêt dense, chaud/froid
+       ─────────────────────────────────────────────────────────────────
+       NOTE : Pour utiliser votre propre screenshot :
+         1. Placez le fichier dans /images/havens-hollow.jpg
+         2. Décommentez la ligne "background-image: url(...)" ci-dessous
+       ───────────────────────────────────────────────────────────────── */
+    .mv-hv {
+      /* background-image: url('images/havens-hollow.jpg'); background-size:cover; background-position:center top; */
+
+      /* Atmospheric CSS art — évoque la ville appalache automnale */
+      background-color: #0c0905;
+      background-image:
+        /* Gradient to bottom */
+        linear-gradient(to bottom,
+          rgba(12,9,5,0)    0%,
+          rgba(12,9,5,.2)   38%,
+          rgba(12,9,5,.82)  70%,
+          rgba(12,9,5,.97)  100%),
+        /* Ciel de crépuscule automnal */
+        radial-gradient(ellipse 120% 50% at 50%  0%,  #251508 0%, #1a0f05 40%, transparent 65%),
+        radial-gradient(ellipse  60% 30% at 25% 12%,  #2e1a08 0%, transparent 55%),
+        radial-gradient(ellipse  50% 22% at 78%  8%,  #221408 0%, transparent 50%),
+        /* Brume de vallée — lumière chaude diffuse */
+        radial-gradient(ellipse 100% 35% at 50%  95%, rgba(120,70,20,.50)  0%, transparent 70%),
+        radial-gradient(ellipse  55% 20% at 65%  90%, rgba(150,90,30,.30)  0%, transparent 60%),
+        /* Silhouettes de bâtiments / clocher */
+        radial-gradient(ellipse  14%  58% at 38%  68%, rgba(6,4,2,.90)   0%, transparent 52%),
+        radial-gradient(ellipse   9%  70% at 48%  65%, rgba(5,3,1,.88)   0%, transparent 48%),
+        radial-gradient(ellipse  30%  20% at 68%  72%, rgba(8,5,2,.72)   0%, transparent 55%),
+        /* Lueur ambrée — lampadaires de village */
+        radial-gradient(ellipse  25%  18% at 40%  78%, rgba(200,130,40,.18) 0%, transparent 60%),
+        radial-gradient(ellipse  20%  15% at 55%  82%, rgba(180,110,30,.14) 0%, transparent 55%),
+        /* Forêt dense — tons bruns/verts sombres */
+        radial-gradient(ellipse  80%  40% at 15%  60%, rgba(40,25,8,.60)  0%, transparent 60%),
+        radial-gradient(ellipse  70%  35% at 85%  55%, rgba(35,20,6,.55)  0%, transparent 60%),
+        /* Base sombre chaude */
+        linear-gradient(155deg, #100a04 0%, #0c0804 55%, #0a0703 100%);
+    }
+
+    /* Grille tactique (CSS pur — aucun droit d'auteur tiers) */
+    .map-visual::after {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px);
+      background-size: 28px 28px;
+      pointer-events: none; z-index: 1;
+    }
+
+    /* Badge "ACTIF" */
+    .map-corner {
+      position: absolute; top: 10px; right: 10px; z-index: 3;
+      font-family: var(--fm); font-size: .54rem; font-weight: 700;
+      letter-spacing: .1em; padding: 3px 8px; border-radius: 3px;
+    }
+    [data-map=rebirth] .map-corner { color: var(--rb);  background: var(--rbb);  border: 1px solid rgba(53,212,116,.28); }
+    [data-map=haven]   .map-corner { color: var(--hv);  background: var(--hvb);  border: 1px solid rgba(196,164,106,.28); }
+
+    /* Map POI tags */
+    .map-pois {
+      position: absolute; top: 10px; left: 10px; z-index: 3;
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .poi-tag {
+      font-family: var(--fm); font-size: .5rem; letter-spacing: .08em;
+      color: rgba(255,255,255,.35); background: rgba(0,0,0,.45);
+      border: 1px solid rgba(255,255,255,.06);
+      padding: 2px 6px; border-radius: 2px; width: fit-content;
+      backdrop-filter: blur(4px);
+    }
+
+    /* Map name overlay */
+    .map-overlay {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 14px 14px 12px; z-index: 3;
+    }
+    .map-name {
+      font-family: var(--fd); font-weight: 900;
+      font-size: 2.2rem; letter-spacing: .04em; line-height: 1;
+      display: block; margin-bottom: 4px;
+    }
+    [data-map=rebirth] .map-name { color: var(--rb); text-shadow: 0 0 30px rgba(53,212,116,.35); }
+    [data-map=haven]   .map-name { color: var(--hv); text-shadow: 0 0 30px rgba(196,164,106,.35); }
+
+    .map-desc {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .map-desc-text {
+      font-family: var(--fm); font-size: .57rem; letter-spacing: .09em; color: var(--t2);
+    }
+    .map-desc-sep { width: 1px; height: 10px; background: var(--bdrhi); }
+
+    /* Copyright image */
+    .map-copyright {
+      position: absolute; bottom: 8px; right: 10px; z-index: 3;
+      font-family: var(--fm); font-size: .48rem;
+      color: rgba(255,255,255,.2); letter-spacing: .04em;
+      pointer-events: none;
+    }
+
+    /* ── TIMER BLOCK ── */
+    .timer-block { padding: 13px 14px; border-top: 1px solid var(--bdr); }
+    .timer-row { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 9px; }
+    .timer-lbl { font-family: var(--fm); font-size: .56rem; letter-spacing: .14em; color: var(--t3); }
+    .timer-val {
+      font-family: var(--fm); font-weight: 700;
+      font-size: 2.6rem; letter-spacing: .02em; line-height: 1;
+      color: var(--t1); transition: color .25s;
+    }
+    .timer-val.warn   { color: var(--gold); }
+    .timer-val.urgent { color: var(--red); animation: blink .4s step-end infinite; }
+    @keyframes blink { 50% { opacity: .35; } }
+
+    .prog-track { height: 2px; background: var(--bdr); border-radius: 99px; overflow: hidden; margin-bottom: 9px; }
+    .prog-fill  { height: 100%; border-radius: 99px; transition: width .5s linear, background .3s; }
+    [data-map=rebirth] .prog-fill { background: var(--rb); }
+    [data-map=haven]   .prog-fill { background: var(--hv); }
+    .prog-fill.warn   { background: var(--gold)  !important; }
+    .prog-fill.urgent { background: var(--red)   !important; }
+
+    .advice-row { display: flex; align-items: center; gap: 7px; font-size: .8rem; color: var(--t2); }
+    .adv-pip { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+
+    /* ═══════════════════════════════════════
+       DUAL ROW — NEXT + ADVICE
+    ═══════════════════════════════════════ */
+    .dual-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+    .info-card { border: 1px solid var(--bdr); border-radius: var(--r); background: var(--s1); padding: 12px 13px; }
+    .info-lbl { font-family: var(--fm); font-size: .55rem; letter-spacing: .14em; color: var(--t3); display: block; margin-bottom: 6px; }
+    .next-name { font-family: var(--fd); font-weight: 700; font-size: 1.1rem; letter-spacing: .03em; line-height: 1.25; }
+    .next-name.rb { color: var(--rb); }
+    .next-name.hv { color: var(--hv); }
+
+    .adv-card { border: 1px solid; border-radius: var(--r); padding: 12px 13px; transition: border-color .25s, background .25s; }
+    .adv-card.go   { border-color: rgba(53,212,116,.22);  background: var(--rbb); }
+    .adv-card.wait { border-color: rgba(233,165,32,.22);  background: var(--goldb); }
+    .adv-card.soon { border-color: rgba(196,164,106,.22); background: var(--hvb); }
+    .adv-head { font-family: var(--fd); font-weight: 700; font-size: 1rem; letter-spacing: .03em; margin-bottom: 3px; }
+    .adv-card.go   .adv-head { color: var(--rb); }
+    .adv-card.wait .adv-head { color: var(--gold); }
+    .adv-card.soon .adv-head { color: var(--hv); }
+    .adv-body { font-size: .76rem; color: var(--t2); line-height: 1.5; }
+
+    /* ═══════════════════════════════════════
+       SYNC BANNER
+    ═══════════════════════════════════════ */
+    .sync-banner {
+      display: flex; align-items: flex-start; gap: 10px;
+      margin-top: 10px; padding: 11px 13px;
+      border: 1px solid rgba(196,164,106,.14); border-radius: var(--r);
+      background: rgba(196,164,106,.04);
+    }
+    .sync-icon { flex-shrink: 0; margin-top: 1px; }
+    .sync-text { font-size: .78rem; color: var(--t2); line-height: 1.6; }
+    .sync-text strong { color: var(--hv); }
+
+    /* ═══════════════════════════════════════
+       AD ZONE
+    ═══════════════════════════════════════ */
+    .ad-zone {
+      min-height: 100px; border: 1px dashed var(--bdr); border-radius: var(--r);
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden; margin-top: 10px;
+    }
+    .ad-lbl {
+      position: absolute; top: 7px; left: 9px;
+      font-family: var(--fm); font-size: .5rem; letter-spacing: .1em; color: var(--t3);
+    }
+
+    /* ═══════════════════════════════════════
+       SCHEDULE
+    ═══════════════════════════════════════ */
+    .sched-list { display: flex; flex-direction: column; gap: 5px; }
+    .sched-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 12px; border: 1px solid var(--bdr);
+      border-radius: var(--r); background: var(--s1); font-size: .82rem;
+    }
+    .sched-item.now { border-color: var(--bdrhi); background: var(--s2); }
+    .sched-bar { width: 3px; height: 26px; border-radius: 99px; flex-shrink: 0; }
+    .sched-bar.rb   { background: var(--rb); }
+    .sched-bar.hv   { background: var(--hv); }
+    .sched-bar.past { background: var(--bdrhi); }
+    .sched-map  { flex: 1; font-weight: 500; }
+    .sched-map.dim { color: var(--t3); font-weight: 400; }
+    .sched-time { font-family: var(--fm); font-size: .6rem; color: var(--t3); }
+    .now-badge {
+      font-family: var(--fm); font-size: .53rem; letter-spacing: .06em;
+      color: var(--gold); background: var(--goldb);
+      border: 1px solid rgba(233,165,32,.22); padding: 2px 6px; border-radius: 3px;
+    }
+
+    /* ═══════════════════════════════════════
+       HISTORY
+    ═══════════════════════════════════════ */
+    .hist-list { display: flex; flex-direction: column; gap: 5px; }
+    .hist-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 12px; border: 1px solid var(--bdr);
+      border-radius: var(--r); background: var(--s1); font-size: .82rem;
+    }
+    .hist-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .hist-dot.rb { background: var(--rb); }
+    .hist-dot.hv { background: var(--hv); }
+    .hist-map  { flex: 1; font-weight: 500; }
+    .hist-time { font-family: var(--fm); font-size: .6rem; color: var(--t3); }
+    .hist-empty { font-family: var(--fm); font-size: .63rem; color: var(--t3); padding: 8px 0; }
+
+    /* ═══════════════════════════════════════
+       CARDS (Notifications, Settings)
+    ═══════════════════════════════════════ */
+    .card { border: 1px solid var(--bdr); border-radius: var(--r); background: var(--s1); padding: 14px; }
+    .card-desc { font-size: .82rem; color: var(--t2); line-height: 1.65; margin-bottom: 12px; }
+    .card-desc strong { color: var(--t1); font-weight: 600; display: block; margin-bottom: 2px; }
+
+    .btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+    .btn {
+      font-family: var(--fb); font-weight: 600; font-size: .8rem;
+      letter-spacing: .03em; padding: 8px 14px;
+      border-radius: var(--r); border: 1px solid transparent; transition: .15s;
+    }
+    .btn-primary { background: var(--gold); color: #000; border-color: var(--gold); }
+    .btn-primary:hover { filter: brightness(1.08); }
+    .btn-primary:disabled { opacity: .45; cursor: default; filter: none; }
+    .btn-ghost  { background: transparent; border-color: var(--bdrhi); color: var(--t2); }
+    .btn-ghost:hover { border-color: var(--t2); color: var(--t1); }
+    .btn-ghost.on-rb { border-color: var(--rb); color: var(--rb); }
+    .btn-ghost.on-hv { border-color: var(--hv); color: var(--hv); }
+    .notif-status { font-family: var(--fm); font-size: .6rem; color: var(--t3); letter-spacing: .04em; }
+
+    /* ── Settings ── */
+    .settings-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .settings-info { flex: 1; }
+    .settings-info strong { display: block; font-weight: 600; font-size: .88rem; margin-bottom: 2px; }
+    .settings-info span   { font-size: .76rem; color: var(--t2); }
+    .dur-ctrl { display: flex; align-items: center; gap: 8px; }
+    .dur-btn {
+      width: 28px; height: 28px;
+      border: 1px solid var(--bdrhi); border-radius: 4px;
+      background: transparent; color: var(--t1); font-size: 1rem;
+      display: flex; align-items: center; justify-content: center; transition: .15s;
+    }
+    .dur-btn:hover { border-color: var(--gold); color: var(--gold); }
+    .dur-val { font-family: var(--fm); font-size: .86rem; min-width: 48px; text-align: center; }
+
+    /* ═══════════════════════════════════════
+       PiP OVERLAY CARD
+    ═══════════════════════════════════════ */
+    .pip-card {
+      border: 1px solid var(--bdr); border-radius: var(--r);
+      background: var(--s1); padding: 14px;
+      display: flex; gap: 13px; align-items: flex-start;
+    }
+    .pip-icon {
+      width: 40px; height: 40px; border-radius: 8px; flex-shrink: 0;
+      background: var(--goldb); border: 1px solid rgba(233,165,32,.18);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .pip-body { flex: 1; }
+    .pip-body strong { display: block; font-weight: 600; font-size: .9rem; margin-bottom: 3px; }
+    .pip-body p { font-size: .78rem; color: var(--t2); line-height: 1.55; margin-bottom: 10px; }
+    .pip-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+    .pip-btn {
+      font-family: var(--fb); font-weight: 600; font-size: .78rem;
+      padding: 7px 14px; border-radius: var(--r); border: 1px solid; transition: .15s; cursor: pointer;
+    }
+    .pip-btn-start { background: var(--gold); color: #000; border-color: var(--gold); }
+    .pip-btn-start:hover { filter: brightness(1.08); }
+    .pip-btn-start:disabled { opacity: .4; cursor: default; filter: none; }
+    .pip-btn-stop { background: transparent; border-color: var(--bdrhi); color: var(--t2); }
+    .pip-btn-stop:hover { border-color: var(--red); color: var(--red); }
+    .pip-status { font-family: var(--fm); font-size: .6rem; color: var(--t3); margin-top: 8px; letter-spacing: .04em; }
+    .pip-status.active { color: var(--rb); }
+
+    /* ═══════════════════════════════════════
+       AFFILIATE
+    ═══════════════════════════════════════ */
+    .aff-card { border: 1px solid var(--bdr); border-radius: var(--r); background: var(--s1); padding: 14px; display: flex; gap: 12px; }
+    .aff-icon {
+      width: 38px; height: 38px; border-radius: 6px; flex-shrink: 0;
+      background: var(--goldb); border: 1px solid rgba(233,165,32,.18);
+      display: flex; align-items: center; justify-content: center; color: var(--gold);
+    }
+    .aff-body { flex: 1; }
+    .aff-body strong { display: block; font-weight: 600; font-size: .88rem; margin-bottom: 3px; }
+    .aff-body p { font-size: .78rem; color: var(--t2); line-height: 1.55; margin-bottom: 8px; }
+    .aff-link { font-family: var(--fm); font-size: .66rem; color: var(--gold); border-bottom: 1px solid rgba(233,165,32,.3); transition: .15s; }
+    .aff-link:hover { color: #ffc84d; }
+    .aff-disc { font-size: .66rem; color: var(--t3); margin-top: 8px; line-height: 1.55; }
+
+    /* ═══════════════════════════════════════
+       FOOTER
+    ═══════════════════════════════════════ */
+    footer { margin-top: 44px; padding-top: 20px; border-top: 1px solid var(--bdr); }
+    .footer-brand { font-family: var(--fd); font-weight: 900; font-size: 1.1rem; color: var(--t3); margin-bottom: 10px; }
+    .footer-disc { font-size: .72rem; color: var(--t3); line-height: 1.78; margin-bottom: 14px; }
+    .footer-disc a { color: var(--t2); text-decoration: underline; }
+    .footer-links { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-bottom: 16px; }
+    .footer-link { font-size: .72rem; color: var(--t3); transition: .15s; }
+    .footer-link:hover { color: var(--t1); }
+    .footer-copy { font-family: var(--fm); font-size: .55rem; letter-spacing: .05em; color: var(--t3); padding-bottom: 24px; }
+
+    /* ═══════════════════════════════════════
+       MODALS (bottom sheet)
+    ═══════════════════════════════════════ */
+    .modal { position: fixed; inset: 0; background: rgba(0,0,0,.75); z-index: 8000; display: none; align-items: flex-end; justify-content: center; }
+    .modal.open { display: flex; }
+    .modal-sheet { background: var(--s1); border-top: 1px solid var(--bdrhi); border-radius: 12px 12px 0 0; width: 100%; max-width: 560px; max-height: 82dvh; overflow-y: auto; padding: 20px 20px 44px; }
+    .modal-handle { width: 36px; height: 4px; background: var(--bdrhi); border-radius: 99px; margin: 0 auto 18px; }
+    .modal-title { font-family: var(--fd); font-weight: 900; font-size: 1.45rem; letter-spacing: .03em; margin-bottom: 14px; }
+    .modal-content { font-size: .8rem; color: var(--t2); line-height: 1.82; }
+    .modal-content h3 { color: var(--t1); font-size: .86rem; margin: 16px 0 5px; font-weight: 600; }
+    .modal-content p  { margin-bottom: 8px; }
+    .modal-content strong { color: var(--t1); }
+    .modal-content a { color: var(--gold); }
+    .modal-close { display: block; width: 100%; margin-top: 22px; padding: 12px; text-align: center; background: var(--gold); color: #000; font-family: var(--fb); font-weight: 700; font-size: .9rem; border-radius: var(--r); cursor: pointer; transition: .15s; border: none; }
+    .modal-close:hover { filter: brightness(1.08); }
+    .modal-close.outline { background: transparent; border: 1px solid var(--bdrhi); color: var(--t2); margin-top: 8px; }
+    .modal-close.outline:hover { border-color: var(--t2); color: var(--t1); }
+  </style>
+
+</head>
+<body>
+
+<main class="page">
+
+  <!-- ════════════ HEADER ════════════ -->
+
+  <header class="header">
+    <div>
+      <div class="logo">ResurgenceTimer<span class="logo-dot">.</span></div>
+      <span class="logo-sub">WARZONE RÉSURGENCE — MAP TRACKER</span>
+    </div>
+    <div class="live-chip"><div class="live-dot"></div>EN DIRECT</div>
+  </header>
+
+  <!-- ════════════ STATUS ════════════ -->
+
+  <div class="status-row">
+    <span>MODE</span><span class="s-sep">/</span><span class="s-hi">RÉSURGENCE</span>
+    <span class="s-sep">·</span>
+    <span id="clock">--:--:--</span>
+    <span class="s-sep">·</span>
+    <span id="tz">--</span>
+    <div class="utc-chip">
+      <svg width="8" height="8" viewBox="0 0 10 10" fill="none">
+        <circle cx="5" cy="5" r="4" stroke="currentColor" stroke-width="1.2"/>
+        <path d="M5 2.5V5L6.5 6.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+      </svg>
+      UTC SYNC
+    </div>
+  </div>
+
+  <!-- ════════════ MAP EN COURS ════════════ -->
+
+  <div class="sec" style="margin-top:20px;">
+    <span class="sec-lbl">MAP EN COURS</span>
+    <div class="sec-line"></div>
+  </div>
+
+  <div class="map-card" id="mapCard" data-map="rebirth">
+    <div class="map-topbar">
+      <span class="map-topbar-lbl">CALL OF DUTY : WARZONE &mdash; RÉSURGENCE</span>
+      <span class="map-slot-badge" id="slotBadge">SLOT 1/2</span>
+    </div>
+
+```
+<div class="map-visual mv-rb" id="mapVis">
+  <!-- POI tags -->
+  <div class="map-pois" id="mapPois">
+    <!-- rempli par JS -->
+  </div>
+  <div class="map-corner" id="mapCorner">ACTIF</div>
+  <div class="map-overlay">
+    <span class="map-name" id="mapName">—</span>
+    <div class="map-desc">
+      <span class="map-desc-text" id="mapRegion">—</span>
+      <div class="map-desc-sep"></div>
+      <span class="map-desc-text" id="mapSize">—</span>
+    </div>
+  </div>
+  <div class="map-copyright">© Activision Publishing, Inc.</div>
+</div>
+
+<div class="timer-block">
+  <div class="timer-row">
+    <span class="timer-lbl">PROCHAIN CHANGEMENT DANS</span>
+    <span class="timer-val" id="timerVal">--:--</span>
+  </div>
+  <div class="prog-track">
+    <div class="prog-fill" id="progFill" style="width:0%"></div>
+  </div>
+  <div class="advice-row">
+    <div class="adv-pip" id="advPip"></div>
+    <span id="advInline">Calcul en cours…</span>
+  </div>
+</div>
+```
+
+  </div>
+
+  <!-- ════════════ NEXT + ADVICE ════════════ -->
+
+  <div class="dual-row">
+    <div class="info-card">
+      <span class="info-lbl">PROCHAINE MAP</span>
+      <div class="next-name rb" id="nextName">—</div>
+    </div>
+    <div class="adv-card go" id="advCard">
+      <div class="adv-head" id="advHead">—</div>
+      <div class="adv-body" id="advBody">—</div>
+    </div>
+  </div>
+
+  <!-- ════════════ SYNC BANNER ════════════ -->
+
+  <div class="sync-banner">
+    <div class="sync-icon">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" color="var(--hv)">
+        <circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.2"/>
+        <path d="M8 3.5V8L10.5 10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+        <path d="M2 8a6 6 0 0 1 6-6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-dasharray="2 1.5"/>
+      </svg>
+    </div>
+    <div class="sync-text">
+      <strong>Timer synchronisé mondialement —</strong>
+      Basé sur l'heure universelle UTC. Un joueur à Paris, Tokyo ou New York voit exactement le même timer au même instant.
+    </div>
+  </div>
+
+  <!-- AD 1 -->
+
+  <div class="ad-zone">
+    <span class="ad-lbl">PUBLICITÉ</span>
+    <!-- Google AdSense — à insérer après approbation
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-VOTRE_ID"></script>
+    <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-VOTRE_ID" data-ad-slot="SLOT_ID" data-ad-format="auto" data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
+    -->
+  </div>
+
+  <!-- ════════════ ROTATION DU JOUR ════════════ -->
+
+  <div class="sec"><span class="sec-lbl">ROTATION DU JOUR</span><div class="sec-line"></div></div>
+  <div class="sched-list" id="schedList"></div>
+
+  <!-- ════════════ HISTORIQUE ════════════ -->
+
+  <div class="sec"><span class="sec-lbl">HISTORIQUE DE SESSION</span><div class="sec-line"></div></div>
+  <div class="hist-list" id="histList">
+    <div class="hist-empty">Aucun changement depuis l'ouverture de la page.</div>
+  </div>
+
+  <!-- AD 2 -->
+
+  <div class="ad-zone" style="margin-top:22px;">
+    <span class="ad-lbl">PUBLICITÉ</span>
+  </div>
+
+  <!-- ════════════ MODE OVERLAY (PiP) ════════════ -->
+
+  <div class="sec"><span class="sec-lbl">MODE OVERLAY</span><div class="sec-line"></div></div>
+  <div class="pip-card">
+    <div class="pip-icon">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="3" width="20" height="14" rx="2"/>
+        <rect x="12" y="10" width="9" height="6" rx="1" fill="rgba(233,165,32,.15)"/>
+      </svg>
+    </div>
+    <div class="pip-body">
+      <strong>Fenêtre flottante — Picture-in-Picture</strong>
+      <p>Affiche le timer dans une petite fenêtre qui reste visible par-dessus tout — même pendant ta partie en mode fenêtré.</p>
+      <div class="pip-btns">
+        <button class="pip-btn pip-btn-start" id="pipStartBtn" onclick="startPiP()">Activer l'overlay</button>
+        <button class="pip-btn pip-btn-stop"  id="pipStopBtn"  onclick="stopPiP()" style="display:none">Désactiver</button>
+      </div>
+      <div class="pip-status" id="pipStatus">Vérification de compatibilité…</div>
+    </div>
+  </div>
+
+  <!-- ════════════ ALERTES ════════════ -->
+
+  <div class="sec"><span class="sec-lbl">ALERTES MAP</span><div class="sec-line"></div></div>
+  <div class="card">
+    <div class="card-desc">
+      <strong>Sois notifié dès que ta map arrive.</strong>
+      Active les notifications navigateur puis sélectionne la map pour laquelle tu veux être alerté.
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" id="notifBtn" onclick="requestNotif()">Activer les notifications</button>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-ghost" id="btnRb" onclick="toggleAlert('rebirth')">Rebirth Island</button>
+      <button class="btn btn-ghost" id="btnHv" onclick="toggleAlert('haven')">Haven's Hollow</button>
+    </div>
+    <div class="notif-status" id="notifStatus">Notifications non configurées.</div>
+  </div>
+
+  <!-- ════════════ PARAMÈTRES ════════════ -->
+
+  <div class="sec"><span class="sec-lbl">PARAMÈTRES</span><div class="sec-line"></div></div>
+  <div class="card">
+    <div class="settings-row">
+      <div class="settings-info">
+        <strong>Durée de rotation</strong>
+        <span>Ajuste si Activision modifie la durée officielle.</span>
+      </div>
+      <div class="dur-ctrl">
+        <button class="dur-btn" onclick="changeDur(-5)">&#x2212;</button>
+        <span class="dur-val"><span id="durVal">25</span> min</span>
+        <button class="dur-btn" onclick="changeDur(+5)">+</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════ SETUP GAMING ════════════ -->
+
+  <div class="sec"><span class="sec-lbl">SETUP GAMING</span><div class="sec-line"></div></div>
+  <div class="aff-card">
+    <div class="aff-icon">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <rect x="2" y="6" width="20" height="12" rx="2"/>
+        <circle cx="8.5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="15.5" cy="12" r="1"/>
+      </svg>
+    </div>
+    <div class="aff-body">
+      <strong>Optimise ton setup Warzone</strong>
+      <p>Souris gaming, casque 7.1, écran 144 Hz — l'équipement des meilleurs joueurs Résurgence.</p>
+      <a class="aff-link" href="https://www.amazon.fr/s?k=gaming+warzone+setup&tag=VOTRE_TAG_ICI" target="_blank" rel="noopener sponsored">Voir la sélection sur Amazon &rarr;</a>
+      <div class="aff-disc">Lien affilié Amazon — commission perçue sur achats éligibles, sans surcoût pour vous. En tant que Partenaire Amazon EU, nous bénéficions des achats réalisés via ce lien.</div>
+    </div>
+  </div>
+
+  <!-- ════════════ FOOTER ════════════ -->
+
+  <footer>
+    <div class="footer-brand">ResurgenceTimer<span style="color:var(--gold)">.</span></div>
+    <div class="footer-disc">
+      Site fan non officiel &mdash; non affilié, sponsorisé ou approuvé par Activision Publishing, Inc.<br>
+      Call of Duty&reg;, Warzone&reg;, Rebirth Island et Haven's Hollow sont des marques déposées d'Activision Publishing, Inc. Tous droits réservés.<br>
+      Les rotations affichées sont des estimations indicatives et peuvent différer des rotations effectives en jeu.<br>
+      Ce site participe au Programme Partenaires d'Amazon EU. Amazon et le logo Amazon sont des marques d'Amazon.com, Inc. ou de ses filiales.
+    </div>
+    <div class="footer-links">
+      <a class="footer-link" href="#" onclick="openModal('privacy');return false;">Politique de confidentialité</a>
+      <a class="footer-link" href="#" onclick="openModal('terms');return false;">Conditions d'utilisation</a>
+      <a class="footer-link" href="mailto:contact@resurgencetimer.com">Contact</a>
+    </div>
+    <div class="footer-copy">&copy; <span id="year"></span> ResurgenceTimer.com &mdash; Tous droits réservés &mdash; Hébergé sur Render</div>
+  </footer>
+
+</main>
+
+<!-- ════════════ MODAL CONFIDENTIALITÉ ════════════ -->
+
+<div class="modal" id="privacyModal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Politique de confidentialité</div>
+    <div class="modal-content">
+      <p><strong>Dernière mise à jour :</strong> Avril 2026</p>
+      <h3>1. Éditeur</h3>
+      <p>ResurgenceTimer.com est édité par un particulier. Contact : <a href="mailto:contact@resurgencetimer.com">contact@resurgencetimer.com</a>. Hébergement : Render.com, San Francisco, CA, USA.</p>
+      <h3>2. Données collectées</h3>
+      <p>Ce site ne collecte aucune donnée personnelle. Aucun compte, aucun formulaire. Vos préférences (durée de rotation, alertes) sont stockées uniquement dans votre navigateur via <code>localStorage</code> et ne sont jamais transmises.</p>
+      <h3>3. Cookies</h3>
+      <p>Ce site n'utilise actuellement aucun cookie tiers. Si Google AdSense ou Analytics est activé à l'avenir, un bandeau de consentement conforme au RGPD sera ajouté avant toute activation.</p>
+      <h3>4. Liens affiliés Amazon</h3>
+      <p>Ce site contient des liens affiliés vers Amazon.fr. Cliquer sur ces liens peut déposer des cookies de suivi de conversion gérés par Amazon EU S.à.r.l. Aucune donnée personnelle n'est collectée de notre côté.</p>
+      <h3>5. Vos droits (RGPD)</h3>
+      <p>Conformément au RGPD (UE 2016/679), vous disposez d'un droit d'accès, de rectification et d'effacement. Contactez-nous à <a href="mailto:contact@resurgencetimer.com">contact@resurgencetimer.com</a>. Réclamation possible auprès de la CNIL (cnil.fr).</p>
+    </div>
+    <button class="modal-close" onclick="closeModal('privacy')">Fermer</button>
+  </div>
+</div>
+
+<!-- ════════════ MODAL CONDITIONS ════════════ -->
+
+<div class="modal" id="termsModal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Conditions d'utilisation</div>
+    <div class="modal-content">
+      <p><strong>Dernière mise à jour :</strong> Avril 2026</p>
+      <h3>1. Nature du site</h3>
+      <p>ResurgenceTimer.com est un site fan non officiel et indépendant, destiné à informer les joueurs sur la rotation estimée des maps du mode Résurgence de Call of Duty&reg; : Warzone&reg;.</p>
+      <h3>2. Propriété intellectuelle</h3>
+      <p>Call of Duty&reg;, Warzone&reg;, Rebirth Island, Haven's Hollow et tous les éléments associés sont la propriété exclusive d'<strong>Activision Publishing, Inc.</strong> Ce site n'est ni affilié, ni approuvé, ni sponsorisé par Activision.</p>
+      <h3>3. Exactitude des données</h3>
+      <p>Les timers sont des estimations. Activision peut modifier la rotation à tout moment. ResurgenceTimer.com ne garantit pas l'exactitude des informations et décline toute responsabilité pour les décisions prises sur leur base.</p>
+      <h3>4. Publicité et affiliation</h3>
+      <p>Ce site est susceptible d'afficher des publicités via Google AdSense. Il contient des liens affiliés vers Amazon.fr ; une commission peut être perçue sur les achats éligibles, sans surcoût pour l'acheteur.</p>
+      <h3>5. Droit applicable</h3>
+      <p>Les présentes conditions sont régies par le droit français. Tout litige sera soumis aux juridictions françaises compétentes.</p>
+    </div>
+    <button class="modal-close" onclick="closeModal('terms')">Fermer</button>
+  </div>
+</div>
+
+<!-- ════════════ JAVASCRIPT ════════════ -->
+
+<script>
+'use strict';
+
+/* ── CONFIG ─────────────────────────────────────────────────── */
+const MAPS = [
+  {
+    id:     'rebirth',
+    name:   'Rebirth Island',
+    vis:    'mv-rb',
+    slot:   '1/2',
+    region: 'ARCHIPEL DE LA MER NOIRE',
+    size:   'PETITE — 11 POI',
+    cls:    'rb',
+    pois:   ['PRISON', 'DOCK', 'HEADQUARTERS', 'INDUSTRY'],
+  },
+  {
+    id:     'haven',
+    name:   "Haven's Hollow",
+    vis:    'mv-hv',
+    slot:   '2/2',
+    region: 'APPALACHES — VIRGINIE-OCCIDENTALE',
+    size:   'MOYENNE — 9 POI',
+    cls:    'hv',
+    pois:   ['MAIN STREET', 'MANSION', 'LUMBER MILL', 'CHURCH'],
+  },
+];
+
+let ROT_MIN = parseInt(localStorage.getItem('rt_dur') || '25', 10);
+let ALERTS  = JSON.parse(localStorage.getItem('rt_alerts') || '[]');
+
+/* ── UTC SYNC ENGINE ────────────────────────────────────────── */
+const cycleMs  = () => ROT_MIN * 60 * 1000;
+const getSlot  = () => Math.floor(Date.now() / cycleMs()) % MAPS.length;
+const getSecsL = () => (cycleMs() - (Date.now() % cycleMs())) / 1000;
+
+/* ── DOM ────────────────────────────────────────────────────── */
+const G = id => document.getElementById(id);
+const E = {
+  card:   G('mapCard'),   vis:    G('mapVis'),     corner: G('mapCorner'),
+  name:   G('mapName'),   region: G('mapRegion'),  size:   G('mapSize'),
+  pois:   G('mapPois'),   slot:   G('slotBadge'),
+  timer:  G('timerVal'),  prog:   G('progFill'),   pip:    G('advPip'),
+  advInl: G('advInline'), advCard:G('advCard'),    advH:   G('advHead'),
+  advB:   G('advBody'),   next:   G('nextName'),   clock:  G('clock'),
+  tz:     G('tz'),        durVal: G('durVal'),
+  sched:  G('schedList'), hist:   G('histList'),
+  nStatus:G('notifStatus'), nBtn: G('notifBtn'),
+};
+
+let lastSlot = -1;
+const sessionHist = [];
+
+/* ── SCHEDULE ───────────────────────────────────────────────── */
+function buildSched() {
+  const cycle = cycleMs(), now = Date.now();
+  const cur   = Math.floor(now / cycle);
+  const back  = Math.ceil((2 * 60) / ROT_MIN);
+  const fwd   = Math.ceil((6 * 60) / ROT_MIN);
+  let html = '';
+  for (let i = -back; i <= fwd; i++) {
+    const si   = cur + i;
+    const s    = si * cycle, e = s + cycle;
+    const mi   = ((si % MAPS.length) + MAPS.length) % MAPS.length;
+    const map  = MAPS[mi];
+    const isNow= s <= now && now < e;
+    const past = e <= now;
+    const t    = localTime(new Date(s));
+    html += `<div class="sched-item${isNow?' now':''}">
+      <div class="sched-bar ${past?'past':map.cls}"></div>
+      <div class="sched-map${past?' dim':''}">${map.name}</div>
+      <div class="sched-time">${t}</div>
+      ${isNow?'<span class="now-badge">EN COURS</span>':''}
+    </div>`;
+  }
+  E.sched.innerHTML = html;
+}
+
+/* ── HISTORY ────────────────────────────────────────────────── */
+function addHist(map) {
+  sessionHist.unshift({ map, time: new Date() });
+  if (sessionHist.length > 8) sessionHist.pop();
+  renderHist();
+}
+function renderHist() {
+  if (!sessionHist.length) {
+    E.hist.innerHTML = '<div class="hist-empty">Aucun changement depuis l\'ouverture de la page.</div>';
+    return;
+  }
+  E.hist.innerHTML = sessionHist.map((h, i) => {
+    const t   = h.time.toLocaleTimeString(USER_LOCALE, {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+    const ago = Math.round((Date.now() - h.time) / 60000);
+    return `<div class="hist-item">
+      <div class="hist-dot ${h.map.cls}"></div>
+      <div class="hist-map">${h.map.name}</div>
+      <div class="hist-time">${t} &mdash; ${i===0?'En cours':`il y a ${ago} min`}</div>
+    </div>`;
+  }).join('');
+}
+
+/* ── MAIN LOOP ──────────────────────────────────────────────── */
+function update() {
+  const slot  = getSlot(), secsL = getSecsL();
+  const total = ROT_MIN * 60, pct = ((total - secsL) / total) * 100;
+  const map   = MAPS[slot], next = MAPS[(slot+1) % MAPS.length];
+  const m = Math.floor(secsL/60), s = Math.floor(secsL%60);
+  const pad = n => String(Math.floor(n)).padStart(2, '0');
+
+  /* Map switch */
+  if (slot !== lastSlot) {
+    if (lastSlot !== -1) {
+      if (ALERTS.includes(map.id) && Notification.permission === 'granted')
+        new Notification(`${map.name} est maintenant active !`, { body:'Rotation en cours — déployez !' });
+      addHist(map);
+    }
+    /* Update card */
+    E.card.dataset.map = map.id;
+    E.vis.className    = `map-visual ${map.vis}`;
+    E.name.textContent   = map.name;
+    E.region.textContent = map.region;
+    E.size.textContent   = map.size;
+    E.slot.textContent   = `SLOT ${map.slot}`;
+    E.next.textContent   = next.name;
+    E.next.className     = `next-name ${next.cls}`;
+    E.pip.style.background = `var(--${map.cls})`;
+    /* POI tags */
+    E.pois.innerHTML = map.pois.map(p => `<div class="poi-tag">${p}</div>`).join('');
+    buildSched();
+    lastSlot = slot;
+  }
+
+  /* Timer */
+  E.timer.textContent = `${pad(m)}:${pad(s)}`;
+  E.timer.classList.remove('warn','urgent');
+  E.prog.classList.remove('warn','urgent');
+  if (secsL <= 30)       { E.timer.classList.add('urgent'); E.prog.classList.add('urgent'); }
+  else if (secsL <= 120) { E.timer.classList.add('warn');   E.prog.classList.add('warn'); }
+  E.prog.style.width = `${Math.min(pct, 100)}%`;
+
+  /* Inline advice */
+  if (secsL <= 30)        E.advInl.textContent = `Rotation dans ${Math.ceil(secsL)}s — ${next.name} arrive`;
+  else if (secsL <= 120)  E.advInl.textContent = `${next.name} dans moins de 2 minutes`;
+  else if (pct < 15)      E.advInl.textContent = `Pleine fenêtre disponible sur ${map.name}`;
+  else                    E.advInl.textContent = `${pad(m)}:${pad(s)} restantes sur ${map.name}`;
+
+  /* Advice card */
+  let cls, head, body;
+  if (secsL <= 60) {
+    cls='soon'; head='Attends la rotation';
+    body=`${next.name} arrive dans ${Math.ceil(secsL)}s.`;
+  } else if (pct >= 72) {
+    cls='wait'; head='Fin de fenêtre';
+    body=`${pad(m)}:${pad(s)} restantes. Lance si tu es rapide.`;
+  } else {
+    cls='go'; head='Lance ta partie';
+    body=`${pad(m)}:${pad(s)} sur ${map.name}.`;
+  }
+  E.advCard.className = `adv-card ${cls}`;
+  E.advH.textContent = head; E.advB.textContent = body;
+
+  E.clock.textContent = new Date().toLocaleTimeString(USER_LOCALE);
+}
+
+/* ── DURATION ───────────────────────────────────────────────── */
+E.durVal.textContent = ROT_MIN;
+function changeDur(d) {
+  ROT_MIN = Math.max(5, Math.min(60, ROT_MIN + d));
+  E.durVal.textContent = ROT_MIN;
+  localStorage.setItem('rt_dur', ROT_MIN);
+  lastSlot = -1; buildSched();
+}
+
+/* ── NOTIFICATIONS ──────────────────────────────────────────── */
+function requestNotif() {
+  if (!('Notification' in window)) { E.nStatus.textContent = 'Non supporté par ce navigateur.'; return; }
+  Notification.requestPermission().then(syncNotifUI);
+}
+function toggleAlert(id) {
+  if (Notification.permission !== 'granted') { requestNotif(); return; }
+  ALERTS = ALERTS.includes(id) ? ALERTS.filter(a=>a!==id) : [...ALERTS, id];
+  localStorage.setItem('rt_alerts', JSON.stringify(ALERTS));
+  syncBtns();
+}
+function syncBtns() {
+  G('btnRb').className = 'btn btn-ghost' + (ALERTS.includes('rebirth') ? ' on-rb' : '');
+  G('btnHv').className = 'btn btn-ghost' + (ALERTS.includes('haven')   ? ' on-hv' : '');
+  const a = ALERTS.map(id => MAPS.find(m=>m.id===id)?.name).filter(Boolean);
+  E.nStatus.textContent = a.length ? `Alertes actives : ${a.join(', ')}.` : 'Aucune alerte sélectionnée.';
+}
+function syncNotifUI(perm) {
+  if (perm==='granted') { G('notifBtn').textContent='Notifications activées'; G('notifBtn').disabled=true; syncBtns(); }
+  else if (perm==='denied') E.nStatus.textContent = 'Notifications bloquées. Modifiez les permissions de votre navigateur.';
+}
+if ('Notification' in window && Notification.permission !== 'default') syncNotifUI(Notification.permission);
+syncBtns();
+
+/* ── MODALS ─────────────────────────────────────────────────── */
+function openModal(n)  { G(n+'Modal').classList.add('open'); }
+function closeModal(n) { G(n+'Modal').classList.remove('open'); }
+document.querySelectorAll('.modal').forEach(m => {
+  m.addEventListener('click', e => { if (e.target===m) m.classList.remove('open'); });
+});
+
+/* ── INIT + LOCALISATION AUTOMATIQUE ───────────────────────────
+   Détecte la langue ET le fuseau horaire du visiteur.
+   Un joueur en France voit 14:32, au Japon 21:32 — le TIMER
+   reste identique car basé sur Date.now() UTC mondial.
+   ─────────────────────────────────────────────────────────────── */
+const USER_LOCALE = navigator.language || 'fr-FR';
+const USER_TZ     = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+function localTime(date, extra = {}) {
+  return date.toLocaleTimeString(USER_LOCALE, { hour:'2-digit', minute:'2-digit', ...extra });
+}
+
+function tzLabel() {
+  const city = USER_TZ.split('/').pop().replace(/_/g,' ');
+  const off  = -new Date().getTimezoneOffset();
+  const sign = off >= 0 ? '+' : '\u2212';
+  const h    = Math.floor(Math.abs(off) / 60);
+  const mn   = Math.abs(off) % 60;
+  const utc  = mn ? `UTC${sign}${h}:${String(mn).padStart(2,'0')}` : `UTC${sign}${h}`;
+  return `${city} \u00b7 ${utc}`;
+}
+
+E.tz.textContent = tzLabel();
+G('year').textContent = new Date().getFullYear();
+
+/* Seed history on load */
+(function seed() {
+  const cycle = cycleMs(), now = Date.now(), cur = Math.floor(now / cycle);
+  for (let i = 2; i >= 0; i--) {
+    const si = cur - i;
+    const mi = ((si % MAPS.length) + MAPS.length) % MAPS.length;
+    sessionHist.push({ map:MAPS[mi], time:new Date(si * cycle) });
+  }
+  renderHist();
+})();
+
+buildSched();
+update();
+setInterval(update, 500);
+setInterval(buildSched, 30_000);
+
+/* ══════════════════════════════════════════════════════════════
+   PICTURE-IN-PICTURE
+   Fenêtre flottante canvas → reste visible par-dessus le jeu.
+   Chrome 70+ / Edge 79+ / Safari 14+
+   ══════════════════════════════════════════════════════════════ */
+let _pipCanvas, _pipCtx, _pipVideo, _pipTick, _pipOn = false;
+
+function initPiP() {
+  const ok = document.pictureInPictureEnabled;
+  const btn = G('pipStartBtn'), st = G('pipStatus');
+  if (ok) { btn.disabled = false; st.textContent = 'Compatible. Cliquez pour ouvrir la fenêtre flottante.'; }
+  else    { btn.disabled = true;  st.textContent = 'Non disponible sur ce navigateur (Chrome, Edge ou Safari 14+ requis).'; }
+}
+
+async function startPiP() {
+  if (!document.pictureInPictureEnabled || _pipOn) return;
+  _pipCanvas = document.createElement('canvas');
+  _pipCanvas.width = 320; _pipCanvas.height = 180;
+  _pipCtx  = _pipCanvas.getContext('2d');
+  _pipVideo = document.createElement('video');
+  _pipVideo.muted = true;
+  _pipVideo.srcObject = _pipCanvas.captureStream(2);
+  _pipVideo.addEventListener('leavepictureinpicture', () => {
+    _pipOn = false; clearInterval(_pipTick);
+    G('pipStartBtn').style.display = '';
+    G('pipStopBtn').style.display  = 'none';
+    const s = G('pipStatus'); s.textContent = 'Fenêtre fermée.'; s.classList.remove('active');
+  });
+  drawPiP();
+  try {
+    await _pipVideo.play();
+    await _pipVideo.requestPictureInPicture();
+    _pipOn  = true; _pipTick = setInterval(drawPiP, 500);
+    G('pipStartBtn').style.display = 'none';
+    G('pipStopBtn').style.display  = '';
+    const s = G('pipStatus'); s.textContent = 'Fenêtre flottante active — minimisez cet onglet.'; s.classList.add('active');
+  } catch(e) {
+    G('pipStatus').textContent = 'Erreur — interagissez d\'abord avec la page puis réessayez.';
+  }
+}
+
+function stopPiP() {
+  if (document.pictureInPictureElement) document.exitPictureInPicture();
+}
+
+function drawPiP() {
+  if (!_pipCtx) return;
+  const slot  = getSlot(), secsL = getSecsL();
+  const map   = MAPS[slot], next = MAPS[(slot+1) % MAPS.length];
+  const m = Math.floor(secsL/60), s = Math.floor(secsL%60);
+  const pad   = n => String(Math.floor(n)).padStart(2,'0');
+  const W=320, H=180, ctx=_pipCtx;
+  const col  = map.id==='rebirth' ? '#35d474' : '#c4a46a';
+  const tcol = secsL<=30 ? '#e04a3a' : secsL<=120 ? '#e9a520' : '#edf1f8';
+
+  ctx.fillStyle='#07090f'; ctx.fillRect(0,0,W,H);
+  /* Left bar */
+  ctx.fillStyle=col; ctx.fillRect(0,0,3,H);
+  /* Grid */
+  ctx.strokeStyle='rgba(255,255,255,.022)'; ctx.lineWidth=1;
+  for(let x=0;x<W;x+=28){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for(let y=0;y<H;y+=28){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+  /* Logo */
+  ctx.fillStyle='#2a3450'; ctx.font='700 9px monospace'; ctx.textAlign='left';
+  ctx.fillText('RESURGENCETIMER.COM', 12, 18);
+  ctx.textAlign='right'; ctx.fillStyle='#38485e'; ctx.fillText('RÉSURGENCE', W-10, 18);
+  /* Map name */
+  ctx.fillStyle=col; ctx.font='bold 20px sans-serif'; ctx.textAlign='left';
+  ctx.fillText(map.name.toUpperCase(), 12, 54);
+  /* Divider */
+  ctx.fillStyle='#181e2e'; ctx.fillRect(12,60,W-24,1);
+  /* Timer label */
+  ctx.fillStyle='#38485e'; ctx.font='600 9px monospace'; ctx.fillText('PROCHAIN CHANGEMENT', 12, 78);
+  /* Timer */
+  if(secsL<=30){ctx.shadowColor='#e04a3a';ctx.shadowBlur=14;}
+  ctx.fillStyle=tcol; ctx.font='bold 54px monospace'; ctx.textAlign='left';
+  ctx.fillText(`${pad(m)}:${pad(s)}`, 7, 145);
+  ctx.shadowBlur=0;
+  /* Progress */
+  const pW=W-24, fl=Math.min((1-secsL/(ROT_MIN*60))*pW,pW);
+  ctx.fillStyle='#181e2e'; ctx.fillRect(12,152,pW,3);
+  ctx.fillStyle=tcol; ctx.fillRect(12,152,fl,3);
+  /* Next */
+  ctx.fillStyle='#38485e'; ctx.font='600 9px monospace'; ctx.textAlign='right';
+  ctx.fillText(`NEXT: ${next.name.toUpperCase()}`, W-10, 170);
+}
+
+initPiP();
+</script>
+
+</body>
+</html>
