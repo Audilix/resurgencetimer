@@ -1,865 +1,1085 @@
 <!DOCTYPE html>
 
-<html lang="fr">
+<html lang="fr" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ResurgenceTimer — Rotation Warzone Résurgence en Direct</title>
-  <meta name="description" content="Suivez en temps réel la rotation des maps Résurgence sur Warzone. Timer synchronisé mondialement — Rebirth Island et Haven's Hollow.">
-  <meta name="theme-color" content="#07090f">
-  <meta property="og:title" content="ResurgenceTimer — Maps Warzone Résurgence en Direct">
-  <meta property="og:description" content="Timer synchronisé pour tous les joueurs du monde. Rebirth Island & Haven's Hollow.">
+  <title>ResurgenceTimer — Rotation Warzone Résurgence</title>
+  <meta name="description" content="Timer de rotation des maps Résurgence Warzone en temps réel. Rebirth Island & Haven's Hollow.">
+  <meta property="og:title" content="ResurgenceTimer — Warzone Résurgence">
+  <meta property="og:description" content="Rebirth Island & Haven's Hollow — timer synchronisé pour tous les joueurs.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://resurgencetimer.com">
   <link rel="canonical" href="https://resurgencetimer.com">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=DM+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 
   <style>
-    /* ═══════════════════════════════════════
-       DESIGN TOKENS
-    ═══════════════════════════════════════ */
-    :root {
-      --bg:    #07090f;
-      --s1:    #0d1018;
-      --s2:    #111420;
-      --bdr:   #181e2e;
-      --bdrhi: #232d45;
+    /* ═══════════════════════════════════════════
+       DARK MODE (défaut)
+    ═══════════════════════════════════════════ */
+    :root, [data-theme="dark"] {
+      --bg:     #060810;
+      --s1:     #0b0e18;
+      --s2:     #0f1322;
+      --bdr:    #161c30;
+      --bdrhi:  #1e2840;
+      --shadow: rgba(0,0,0,.5);
 
-      --gold:  #e9a520;
-      --goldb: rgba(233,165,32,.09);
+      --rb:   #2ee87a;
+      --rbd:  #1aaa52;
+      --rbb:  rgba(46,232,122,.08);
+      --rbbr: rgba(46,232,122,.22);
 
-      /* Rebirth Island — prison island, industrial green */
-      --rb:    #35d474;
-      --rb2:   #22a558;
-      --rbb:   rgba(53,212,116,.08);
+      --hv:   #c4a46a;
+      --hvd:  #8a6e3a;
+      --hvb:  rgba(196,164,106,.08);
+      --hvbr: rgba(196,164,106,.22);
 
-      /* Haven's Hollow — Appalachian autumn town */
-      --hv:    #c4a46a;
-      --hv2:   #d4884a;
-      --hvb:   rgba(196,164,106,.08);
+      --gold:  #f0a820;
+      --goldb: rgba(240,168,32,.10);
+      --goldbr:rgba(240,168,32,.22);
 
-      --red:   #e04a3a;
-      --t1:    #edf1f8;
-      --t2:    #7d90ab;
-      --t3:    #38485e;
+      --red:  #e84040;
+      --t1:   #edf2fa;
+      --t2:   #6a7f9a;
+      --t3:   #2c3a50;
+      --t4:   #1a2438;
 
-      --fd: 'Barlow Condensed', sans-serif;
-      --fb: 'DM Sans', sans-serif;
-      --fm: 'JetBrains Mono', monospace;
-      --r:  6px;
+      --map-rb-overlay: linear-gradient(to bottom,rgba(4,14,8,.05) 0%,rgba(4,14,8,.25) 40%,rgba(4,14,8,.88) 72%,rgba(4,14,8,.98) 100%);
+      --map-hv-overlay: linear-gradient(to bottom,rgba(10,7,4,.05) 0%,rgba(10,7,4,.25) 40%,rgba(10,7,4,.88) 72%,rgba(10,7,4,.98) 100%);
     }
 
+    /* ═══════════════════════════════════════════
+       LIGHT MODE
+    ═══════════════════════════════════════════ */
+    [data-theme="light"] {
+      --bg:     #f0f3f8;
+      --s1:     #ffffff;
+      --s2:     #f7f9fc;
+      --bdr:    #dde3ee;
+      --bdrhi:  #c8d0e0;
+      --shadow: rgba(0,0,0,.10);
+
+      --rb:   #16a04d;
+      --rbd:  #0d7a38;
+      --rbb:  rgba(22,160,77,.08);
+      --rbbr: rgba(22,160,77,.25);
+
+      --hv:   #8a6020;
+      --hvd:  #6a4810;
+      --hvb:  rgba(138,96,32,.08);
+      --hvbr: rgba(138,96,32,.25);
+
+      --gold:  #c07810;
+      --goldb: rgba(192,120,16,.10);
+      --goldbr:rgba(192,120,16,.25);
+
+      --red:  #cc2020;
+      --t1:   #0f1829;
+      --t2:   #5a6e88;
+      --t3:   #a0aec0;
+      --t4:   #dde3ee;
+
+      --map-rb-overlay: linear-gradient(to bottom,rgba(4,14,8,.0) 0%,rgba(4,14,8,.15) 35%,rgba(4,14,8,.80) 70%,rgba(4,14,8,.96) 100%);
+      --map-hv-overlay: linear-gradient(to bottom,rgba(10,7,4,.0) 0%,rgba(10,7,4,.15) 35%,rgba(10,7,4,.80) 70%,rgba(10,7,4,.96) 100%);
+    }
+
+    /* ═══════════════════════════════════════════
+       BASE
+    ═══════════════════════════════════════════ */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body {
       background: var(--bg);
       color: var(--t1);
-      font-family: var(--fb);
-      font-size: .9375rem;
-      line-height: 1.55;
+      font-family: 'Syne', sans-serif;
       -webkit-font-smoothing: antialiased;
       min-height: 100dvh;
+      overflow-x: hidden;
+      transition: background .3s, color .3s;
     }
     a { color: inherit; text-decoration: none; }
-    button { font-family: var(--fb); cursor: pointer; border: none; background: none; }
+    button { font-family: 'Syne', sans-serif; cursor: pointer; border: none; background: none; }
+    .page { max-width: 560px; margin: 0 auto; padding: 0 16px 80px; }
 
-    .page { max-width: 560px; margin: 0 auto; padding: 0 16px 96px; }
-
-    /* ═══════════════════════════════════════
+    /* ═══════════════════════════════════════════
        HEADER
-    ═══════════════════════════════════════ */
+    ═══════════════════════════════════════════ */
     .header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 16px 0 14px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 0 12px;
       border-bottom: 1px solid var(--bdr);
+      gap: 10px;
     }
-    .logo { font-family: var(--fd); font-weight: 900; font-size: 1.5rem; letter-spacing: .02em; }
+    .logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.55rem; letter-spacing: .06em; color: var(--t1);
+      flex-shrink: 0;
+    }
     .logo-dot { color: var(--gold); }
-    .logo-sub { font-family: var(--fm); font-size: .55rem; color: var(--t3); letter-spacing: .12em; display: block; margin-top: 1px; }
+
+    .header-right { display: flex; align-items: center; gap: 6px; }
+
+    /* Bouton générique compact */
+    .hbtn {
+      display: flex; align-items: center; gap: 5px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .56rem; font-weight: 700; letter-spacing: .1em;
+      color: var(--t2); background: transparent;
+      border: 1px solid var(--bdrhi); padding: 5px 9px; border-radius: 4px;
+      transition: .15s; cursor: pointer; white-space: nowrap;
+    }
+    .hbtn:hover { border-color: var(--gold); color: var(--gold); }
+    .hbtn.active { border-color: var(--rb); color: var(--rb); }
+    .hbtn svg { flex-shrink: 0; }
+
+    /* Chip LIVE */
     .live-chip {
-      display: flex; align-items: center; gap: 6px;
-      font-family: var(--fm); font-size: .58rem; font-weight: 700; letter-spacing: .12em;
+      display: flex; align-items: center; gap: 5px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .56rem; font-weight: 700; letter-spacing: .12em;
       color: var(--rb); background: var(--rbb);
-      border: 1px solid rgba(53,212,116,.24); padding: 4px 9px; border-radius: 3px;
+      border: 1px solid var(--rbbr); padding: 5px 9px; border-radius: 4px;
+      flex-shrink: 0;
     }
     .live-dot {
       width: 5px; height: 5px; border-radius: 50%;
-      background: var(--rb); box-shadow: 0 0 6px var(--rb);
+      background: var(--rb); box-shadow: 0 0 7px var(--rb);
       animation: pulse .9s ease-in-out infinite;
     }
-    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.2;transform:scale(.5)} }
+    @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.15;transform:scale(.4)}}
 
-    /* ═══════════════════════════════════════
-       STATUS ROW
-    ═══════════════════════════════════════ */
-    .status-row {
-      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    /* ═══════════════════════════════════════════
+       STATUS BAR + COUNTRY SELECTOR
+    ═══════════════════════════════════════════ */
+    .status-bar {
+      display: flex; align-items: center; justify-content: space-between;
       padding: 8px 0; border-bottom: 1px solid var(--bdr);
-      font-family: var(--fm); font-size: .6rem; color: var(--t3); letter-spacing: .05em;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .6rem; color: var(--t3); letter-spacing: .05em;
+      gap: 8px; flex-wrap: wrap;
     }
-    .s-hi  { color: var(--t2); }
-    .s-sep { color: var(--bdrhi); }
-    .utc-chip {
-      margin-left: auto; display: flex; align-items: center; gap: 5px;
-      font-size: .56rem; color: var(--hv);
-      background: var(--hvb); border: 1px solid rgba(196,164,106,.2);
-      padding: 3px 7px; border-radius: 3px;
+    .status-left { display: flex; align-items: center; gap: 8px; }
+    .s-hi { color: var(--t2); }
+
+    .country-selector { position: relative; }
+    .country-btn {
+      display: flex; align-items: center; gap: 5px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .58rem; font-weight: 700; letter-spacing: .08em;
+      color: var(--t2); background: transparent;
+      border: 1px solid var(--bdrhi); padding: 4px 8px; border-radius: 4px;
+      cursor: pointer; transition: .15s; white-space: nowrap;
     }
+    .country-btn:hover { border-color: var(--gold); color: var(--gold); }
 
-    /* ═══════════════════════════════════════
-       SECTION DIVIDER
-    ═══════════════════════════════════════ */
-    .sec { display: flex; align-items: center; gap: 10px; margin: 22px 0 10px; }
-    .sec-lbl { font-family: var(--fm); font-size: .56rem; font-weight: 700; letter-spacing: .18em; color: var(--t3); white-space: nowrap; }
-    .sec-line { flex: 1; height: 1px; background: var(--bdr); }
-
-    /* ═══════════════════════════════════════
-       MAP CARD
-    ═══════════════════════════════════════ */
-    .map-card {
-      border-radius: var(--r); overflow: hidden;
+    .country-dropdown {
+      position: absolute; right: 0; top: calc(100% + 6px);
       background: var(--s1); border: 1px solid var(--bdrhi);
-      transition: border-color .5s;
+      border-radius: 6px; min-width: 200px; z-index: 999;
+      box-shadow: 0 8px 32px var(--shadow);
+      display: none; overflow: hidden;
     }
-    .map-card[data-map=rebirth] { border-color: rgba(53,212,116,.30); }
-    .map-card[data-map=haven]   { border-color: rgba(196,164,106,.30); }
+    .country-dropdown.open { display: block; }
+    .country-dropdown-header {
+      padding: 10px 12px 7px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .54rem; letter-spacing: .14em; color: var(--t3);
+      border-bottom: 1px solid var(--bdr);
+    }
+    .country-option {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 12px; cursor: pointer; transition: .12s;
+      font-size: .82rem; font-weight: 600;
+    }
+    .country-option:hover { background: var(--s2); }
+    .country-option.selected { color: var(--gold); }
+    .country-flag { font-size: 1.1rem; flex-shrink: 0; }
+    .country-tz {
+      margin-left: auto; font-family: 'JetBrains Mono', monospace;
+      font-size: .58rem; color: var(--t3);
+    }
 
+    /* ═══════════════════════════════════════════
+       MAP CARD
+    ═══════════════════════════════════════════ */
+    .map-card {
+      margin-top: 16px; border-radius: 8px; overflow: hidden;
+      background: var(--s1); border: 1px solid var(--bdrhi);
+      transition: border-color .5s, background .3s;
+      box-shadow: 0 4px 24px var(--shadow);
+    }
+    [data-map=rebirth].map-card { border-color: var(--rbbr); }
+    [data-map=haven].map-card   { border-color: var(--hvbr); }
+
+    /* Topbar */
     .map-topbar {
       display: flex; align-items: center; justify-content: space-between;
-      padding: 7px 13px; border-bottom: 1px solid var(--bdr);
-      background: rgba(255,255,255,.018);
+      padding: 7px 14px; border-bottom: 1px solid var(--bdr);
+      background: var(--s2); transition: background .3s;
     }
-    .map-topbar-lbl { font-family: var(--fm); font-size: .54rem; letter-spacing: .14em; color: var(--t3); }
-    .map-slot-badge {
-      font-family: var(--fm); font-size: .54rem; letter-spacing: .1em;
-      color: var(--t2); border: 1px solid var(--bdrhi); padding: 2px 7px; border-radius: 3px;
+    .map-topbar-lbl {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .52rem; letter-spacing: .14em; color: var(--t3);
+    }
+    .map-slot {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .52rem; color: var(--t2);
+      border: 1px solid var(--bdrhi); padding: 2px 7px; border-radius: 3px;
     }
 
-    /* ── MAP VISUAL ── */
-    .map-visual {
-      position: relative; height: 200px; overflow: hidden;
+    /* Visual */
+    .map-visual { position: relative; height: 210px; overflow: hidden; }
+    .map-visual::after {
+      content: ''; position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,.014) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.014) 1px, transparent 1px);
+      background-size: 30px 30px; pointer-events: none; z-index: 1;
     }
 
-    /* ─────────────────────────────────────────────────────────────────
-       REBIRTH ISLAND — Prison island, mer émeraude, ciel orageux
-       Palette : vert industriel, acier, rouille, eau froide
-       ─────────────────────────────────────────────────────────────────
-       NOTE : Pour utiliser votre propre screenshot (recommandé) :
-         1. Prenez un screenshot in-game ou récupérez une image promotionnelle
-         2. Placez le fichier dans /images/rebirth-island.jpg
-         3. Décommentez la ligne "background-image: url(...)" ci-dessous
-         4. Ajoutez la mention "© Activision Publishing, Inc." sur la page
-       ───────────────────────────────────────────────────────────────── */
+    /* ──────────────────────────────────────────
+       REBIRTH ISLAND
+       Remplace le fallback CSS par ton image :
+       1. Upload images/rebirth-island.jpg sur GitHub
+       2. Le background-image: url(...) est déjà actif
+    ────────────────────────────────────────── */
     .mv-rb {
       background-image: url('images/rebirth-island.jpg');
-      background-size: cover;
-      background-position: center top;
-
-      /* Fallback si l'image n'est pas encore uploadée */
-      background-color: #050e08;
-      background-image:
-        /* Gradient to bottom — fade to dark for text readability */
-        linear-gradient(to bottom,
-          rgba(5,14,8,0)    0%,
-          rgba(5,14,8,.25)  40%,
-          rgba(5,14,8,.85)  72%,
-          rgba(5,14,8,.98)  100%),
-        /* Ciel orageux — couches de nuages */
-        radial-gradient(ellipse 110% 55% at 50% 0%,   #0d2218 0%, #091a10 35%, transparent 65%),
-        radial-gradient(ellipse  70% 30% at 20% 15%,  #132b1a 0%, transparent 55%),
-        radial-gradient(ellipse  55% 25% at 80% 10%,  #0f2416 0%, transparent 50%),
-        /* Mer émeraude — reflets en bas */
-        radial-gradient(ellipse 100% 28% at 50% 100%, rgba(15,80,50,.65)  0%, transparent 70%),
-        radial-gradient(ellipse  45% 18% at 30%  95%, rgba(20,100,60,.35) 0%, transparent 60%),
-        /* Structures de l'île — silhouettes sombres */
-        radial-gradient(ellipse  18%  62% at 42%  68%, rgba(3,8,4,.92)   0%, transparent 55%),
-        radial-gradient(ellipse  12%  55% at 52%  72%, rgba(2,6,3,.88)   0%, transparent 50%),
-        radial-gradient(ellipse  28%  22% at 65%  75%, rgba(5,12,6,.75)  0%, transparent 55%),
-        /* Lueur verte diffuse — ambiance opérationnelle */
-        radial-gradient(ellipse  60%  45% at 50%  55%, rgba(30,130,70,.12) 0%, transparent 65%),
-        /* Base sombre uniforme */
-        linear-gradient(160deg, #071208 0%, #050e07 60%, #040a06 100%);
+      background-size: cover; background-position: center top;
+      background-color: #041008;
+      position: relative;
+    }
+    .mv-rb::before {
+      content: ''; position: absolute; inset: 0; z-index: 0;
+      background: var(--map-rb-overlay);
     }
 
-    /* ─────────────────────────────────────────────────────────────────
-       HAVEN'S HOLLOW — Petite ville des Appalaches, automne
-       Palette : ambre, ocre, brume matinale, forêt dense, chaud/froid
-       ─────────────────────────────────────────────────────────────────
-       NOTE : Pour utiliser votre propre screenshot :
-         1. Placez le fichier dans /images/havens-hollow.jpg
-         2. Décommentez la ligne "background-image: url(...)" ci-dessous
-       ───────────────────────────────────────────────────────────────── */
+    /* ──────────────────────────────────────────
+       HAVEN'S HOLLOW
+       1. Upload images/havens-hollow.jpg sur GitHub
+    ────────────────────────────────────────── */
     .mv-hv {
       background-image: url('images/havens-hollow.jpg');
-      background-size: cover;
-      background-position: center top;
-
-      /* Fallback si l'image n'est pas encore uploadée */
-      background-color: #0c0905;
-      background-image:
-        /* Gradient to bottom */
-        linear-gradient(to bottom,
-          rgba(12,9,5,0)    0%,
-          rgba(12,9,5,.2)   38%,
-          rgba(12,9,5,.82)  70%,
-          rgba(12,9,5,.97)  100%),
-        /* Ciel de crépuscule automnal */
-        radial-gradient(ellipse 120% 50% at 50%  0%,  #251508 0%, #1a0f05 40%, transparent 65%),
-        radial-gradient(ellipse  60% 30% at 25% 12%,  #2e1a08 0%, transparent 55%),
-        radial-gradient(ellipse  50% 22% at 78%  8%,  #221408 0%, transparent 50%),
-        /* Brume de vallée — lumière chaude diffuse */
-        radial-gradient(ellipse 100% 35% at 50%  95%, rgba(120,70,20,.50)  0%, transparent 70%),
-        radial-gradient(ellipse  55% 20% at 65%  90%, rgba(150,90,30,.30)  0%, transparent 60%),
-        /* Silhouettes de bâtiments / clocher */
-        radial-gradient(ellipse  14%  58% at 38%  68%, rgba(6,4,2,.90)   0%, transparent 52%),
-        radial-gradient(ellipse   9%  70% at 48%  65%, rgba(5,3,1,.88)   0%, transparent 48%),
-        radial-gradient(ellipse  30%  20% at 68%  72%, rgba(8,5,2,.72)   0%, transparent 55%),
-        /* Lueur ambrée — lampadaires de village */
-        radial-gradient(ellipse  25%  18% at 40%  78%, rgba(200,130,40,.18) 0%, transparent 60%),
-        radial-gradient(ellipse  20%  15% at 55%  82%, rgba(180,110,30,.14) 0%, transparent 55%),
-        /* Forêt dense — tons bruns/verts sombres */
-        radial-gradient(ellipse  80%  40% at 15%  60%, rgba(40,25,8,.60)  0%, transparent 60%),
-        radial-gradient(ellipse  70%  35% at 85%  55%, rgba(35,20,6,.55)  0%, transparent 60%),
-        /* Base sombre chaude */
-        linear-gradient(155deg, #100a04 0%, #0c0804 55%, #0a0703 100%);
+      background-size: cover; background-position: center top;
+      background-color: #0c0804;
+      position: relative;
+    }
+    .mv-hv::before {
+      content: ''; position: absolute; inset: 0; z-index: 0;
+      background: var(--map-hv-overlay);
     }
 
-    /* Grille tactique (CSS pur — aucun droit d'auteur tiers) */
-    .map-visual::after {
-      content: '';
-      position: absolute; inset: 0;
-      background-image:
-        linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px);
-      background-size: 28px 28px;
-      pointer-events: none; z-index: 1;
+    /* Badge ACTIF */
+    .map-badge {
+      position: absolute; top: 12px; right: 12px; z-index: 3;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .52rem; font-weight: 700; letter-spacing: .12em;
+      padding: 3px 9px; border-radius: 3px;
     }
+    [data-map=rebirth] .map-badge { color:var(--rb); background:var(--rbb); border:1px solid var(--rbbr); }
+    [data-map=haven]   .map-badge { color:var(--hv); background:var(--hvb); border:1px solid var(--hvbr); }
 
-    /* Badge "ACTIF" */
-    .map-corner {
-      position: absolute; top: 10px; right: 10px; z-index: 3;
-      font-family: var(--fm); font-size: .54rem; font-weight: 700;
-      letter-spacing: .1em; padding: 3px 8px; border-radius: 3px;
-    }
-    [data-map=rebirth] .map-corner { color: var(--rb);  background: var(--rbb);  border: 1px solid rgba(53,212,116,.28); }
-    [data-map=haven]   .map-corner { color: var(--hv);  background: var(--hvb);  border: 1px solid rgba(196,164,106,.28); }
-
-    /* Map POI tags */
+    /* Tags POI */
     .map-pois {
-      position: absolute; top: 10px; left: 10px; z-index: 3;
+      position: absolute; top: 12px; left: 12px; z-index: 3;
       display: flex; flex-direction: column; gap: 4px;
     }
-    .poi-tag {
-      font-family: var(--fm); font-size: .5rem; letter-spacing: .08em;
-      color: rgba(255,255,255,.35); background: rgba(0,0,0,.45);
-      border: 1px solid rgba(255,255,255,.06);
-      padding: 2px 6px; border-radius: 2px; width: fit-content;
-      backdrop-filter: blur(4px);
+    .map-poi {
+      font-family: 'JetBrains Mono', monospace; font-size: .48rem;
+      letter-spacing: .08em; color: rgba(255,255,255,.45);
+      background: rgba(0,0,0,.5); border: 1px solid rgba(255,255,255,.06);
+      padding: 2px 6px; border-radius: 2px; backdrop-filter: blur(6px);
+      width: fit-content;
     }
 
-    /* Map name overlay */
+    /* Overlay */
     .map-overlay {
       position: absolute; bottom: 0; left: 0; right: 0;
       padding: 14px 14px 12px; z-index: 3;
     }
     .map-name {
-      font-family: var(--fd); font-weight: 900;
-      font-size: 2.2rem; letter-spacing: .04em; line-height: 1;
-      display: block; margin-bottom: 4px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.5rem; letter-spacing: .06em; line-height: 1;
+      display: block; margin-bottom: 5px;
     }
-    [data-map=rebirth] .map-name { color: var(--rb); text-shadow: 0 0 30px rgba(53,212,116,.35); }
-    [data-map=haven]   .map-name { color: var(--hv); text-shadow: 0 0 30px rgba(196,164,106,.35); }
+    [data-map=rebirth] .map-name { color:var(--rb); text-shadow:0 0 40px rgba(46,232,122,.35); }
+    [data-map=haven]   .map-name { color:var(--hv); text-shadow:0 0 40px rgba(196,164,106,.35); }
 
-    .map-desc {
-      display: flex; align-items: center; gap: 10px;
+    .map-tags { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+    .map-tag {
+      font-family: 'JetBrains Mono', monospace; font-size: .5rem;
+      letter-spacing: .09em; color: rgba(255,255,255,.4);
+      background: rgba(0,0,0,.5); border: 1px solid rgba(255,255,255,.06);
+      padding: 2px 6px; border-radius: 2px; backdrop-filter: blur(4px);
     }
-    .map-desc-text {
-      font-family: var(--fm); font-size: .57rem; letter-spacing: .09em; color: var(--t2);
-    }
-    .map-desc-sep { width: 1px; height: 10px; background: var(--bdrhi); }
-
-    /* Copyright image */
-    .map-copyright {
-      position: absolute; bottom: 8px; right: 10px; z-index: 3;
-      font-family: var(--fm); font-size: .48rem;
-      color: rgba(255,255,255,.2); letter-spacing: .04em;
-      pointer-events: none;
+    .map-copy {
+      position: absolute; bottom: 8px; right: 12px; z-index: 3;
+      font-family: 'JetBrains Mono', monospace; font-size: .44rem;
+      color: rgba(255,255,255,.18); pointer-events: none;
     }
 
-    /* ── TIMER BLOCK ── */
-    .timer-block { padding: 13px 14px; border-top: 1px solid var(--bdr); }
-    .timer-row { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 9px; }
-    .timer-lbl { font-family: var(--fm); font-size: .56rem; letter-spacing: .14em; color: var(--t3); }
+    /* Timer block */
+    .timer-block {
+      display: grid; grid-template-columns: 1fr auto;
+      align-items: center; gap: 0 16px;
+      padding: 13px 14px;
+      border-top: 1px solid var(--bdr);
+    }
+    .timer-lbl {
+      font-family: 'JetBrains Mono', monospace; font-size: .52rem;
+      letter-spacing: .16em; color: var(--t3); display: block; margin-bottom: 4px;
+    }
     .timer-val {
-      font-family: var(--fm); font-weight: 700;
-      font-size: 2.6rem; letter-spacing: .02em; line-height: 1;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 4rem; letter-spacing: .04em; line-height: 1;
       color: var(--t1); transition: color .25s;
     }
     .timer-val.warn   { color: var(--gold); }
     .timer-val.urgent { color: var(--red); animation: blink .4s step-end infinite; }
-    @keyframes blink { 50% { opacity: .35; } }
+    @keyframes blink { 50%{opacity:.3} }
 
-    .prog-track { height: 2px; background: var(--bdr); border-radius: 99px; overflow: hidden; margin-bottom: 9px; }
-    .prog-fill  { height: 100%; border-radius: 99px; transition: width .5s linear, background .3s; }
-    [data-map=rebirth] .prog-fill { background: var(--rb); }
-    [data-map=haven]   .prog-fill { background: var(--hv); }
-    .prog-fill.warn   { background: var(--gold)  !important; }
-    .prog-fill.urgent { background: var(--red)   !important; }
-
-    .advice-row { display: flex; align-items: center; gap: 7px; font-size: .8rem; color: var(--t2); }
-    .adv-pip { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
-
-    /* ═══════════════════════════════════════
-       DUAL ROW — NEXT + ADVICE
-    ═══════════════════════════════════════ */
-    .dual-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-    .info-card { border: 1px solid var(--bdr); border-radius: var(--r); background: var(--s1); padding: 12px 13px; }
-    .info-lbl { font-family: var(--fm); font-size: .55rem; letter-spacing: .14em; color: var(--t3); display: block; margin-bottom: 6px; }
-    .next-name { font-family: var(--fd); font-weight: 700; font-size: 1.1rem; letter-spacing: .03em; line-height: 1.25; }
+    .next-lbl {
+      font-family: 'JetBrains Mono', monospace; font-size: .52rem;
+      letter-spacing: .14em; color: var(--t3); display: block;
+      margin-bottom: 4px; text-align: right;
+    }
+    .next-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.35rem; letter-spacing: .05em; text-align: right;
+    }
     .next-name.rb { color: var(--rb); }
     .next-name.hv { color: var(--hv); }
 
-    .adv-card { border: 1px solid; border-radius: var(--r); padding: 12px 13px; transition: border-color .25s, background .25s; }
-    .adv-card.go   { border-color: rgba(53,212,116,.22);  background: var(--rbb); }
-    .adv-card.wait { border-color: rgba(233,165,32,.22);  background: var(--goldb); }
-    .adv-card.soon { border-color: rgba(196,164,106,.22); background: var(--hvb); }
-    .adv-head { font-family: var(--fd); font-weight: 700; font-size: 1rem; letter-spacing: .03em; margin-bottom: 3px; }
-    .adv-card.go   .adv-head { color: var(--rb); }
-    .adv-card.wait .adv-head { color: var(--gold); }
-    .adv-card.soon .adv-head { color: var(--hv); }
-    .adv-body { font-size: .76rem; color: var(--t2); line-height: 1.5; }
+    /* Progress */
+    .prog-wrap { padding: 0 14px 13px; }
+    .prog-track { height: 2px; background: var(--bdr); border-radius: 99px; overflow: hidden; }
+    .prog-fill  { height: 100%; border-radius: 99px; transition: width .5s linear, background .3s; }
+    [data-map=rebirth] .prog-fill { background: var(--rb); }
+    [data-map=haven]   .prog-fill { background: var(--hv); }
+    .prog-fill.warn   { background: var(--gold) !important; }
+    .prog-fill.urgent { background: var(--red)  !important; }
 
-    /* ═══════════════════════════════════════
-       SYNC BANNER
-    ═══════════════════════════════════════ */
-    .sync-banner {
-      display: flex; align-items: flex-start; gap: 10px;
-      margin-top: 10px; padding: 11px 13px;
-      border: 1px solid rgba(196,164,106,.14); border-radius: var(--r);
-      background: rgba(196,164,106,.04);
+    /* Advice */
+    .advice {
+      margin: 0 14px 14px; padding: 10px 13px;
+      border-radius: 5px; border: 1px solid;
+      display: flex; align-items: center; gap: 10px;
+      transition: border-color .3s, background .3s;
     }
-    .sync-icon { flex-shrink: 0; margin-top: 1px; }
-    .sync-text { font-size: .78rem; color: var(--t2); line-height: 1.6; }
-    .sync-text strong { color: var(--hv); }
+    .advice.go   { border-color:var(--rbbr); background:var(--rbb); }
+    .advice.wait { border-color:var(--goldbr); background:var(--goldb); }
+    .advice.soon { border-color:var(--hvbr); background:var(--hvb); }
+    .advice-icon { flex-shrink: 0; display: flex; }
+    .advice-head {
+      font-weight: 700; font-size: .86rem; letter-spacing: .01em; margin-bottom: 1px;
+    }
+    .advice.go   .advice-head { color: var(--rb); }
+    .advice.wait .advice-head { color: var(--gold); }
+    .advice.soon .advice-head { color: var(--hv); }
+    .advice-sub { font-size: .75rem; color: var(--t2); line-height: 1.45; }
 
-    /* ═══════════════════════════════════════
-       AD ZONE
-    ═══════════════════════════════════════ */
-    .ad-zone {
-      min-height: 100px; border: 1px dashed var(--bdr); border-radius: var(--r);
-      display: flex; align-items: center; justify-content: center;
-      position: relative; overflow: hidden; margin-top: 10px;
+    /* ═══════════════════════════════════════════
+       SECTION DIVIDERS
+    ═══════════════════════════════════════════ */
+    .sec { display: flex; align-items: center; gap: 10px; margin: 22px 0 10px; }
+    .sec-lbl {
+      font-family: 'JetBrains Mono', monospace; font-size: .54rem;
+      font-weight: 700; letter-spacing: .2em; color: var(--t3); white-space: nowrap;
     }
-    .ad-lbl {
-      position: absolute; top: 7px; left: 9px;
-      font-family: var(--fm); font-size: .5rem; letter-spacing: .1em; color: var(--t3);
-    }
+    .sec-line { flex: 1; height: 1px; background: var(--bdr); }
 
-    /* ═══════════════════════════════════════
+    /* ═══════════════════════════════════════════
        SCHEDULE
-    ═══════════════════════════════════════ */
-    .sched-list { display: flex; flex-direction: column; gap: 5px; }
+    ═══════════════════════════════════════════ */
+    .sched-list { display: flex; flex-direction: column; gap: 4px; }
     .sched-item {
       display: flex; align-items: center; gap: 10px;
-      padding: 9px 12px; border: 1px solid var(--bdr);
-      border-radius: var(--r); background: var(--s1); font-size: .82rem;
+      padding: 10px 13px; border: 1px solid var(--bdr);
+      border-radius: 5px; background: var(--s1);
+      transition: background .3s, border-color .2s;
     }
-    .sched-item.now { border-color: var(--bdrhi); background: var(--s2); }
+    .sched-item.now  { border-color: var(--bdrhi); background: var(--s2); }
+    .sched-item.past { opacity: .4; }
     .sched-bar { width: 3px; height: 26px; border-radius: 99px; flex-shrink: 0; }
     .sched-bar.rb   { background: var(--rb); }
     .sched-bar.hv   { background: var(--hv); }
     .sched-bar.past { background: var(--bdrhi); }
-    .sched-map  { flex: 1; font-weight: 500; }
-    .sched-map.dim { color: var(--t3); font-weight: 400; }
-    .sched-time { font-family: var(--fm); font-size: .6rem; color: var(--t3); }
+    .sched-map  { flex: 1; font-size: .86rem; font-weight: 600; }
+    .sched-time { font-family: 'JetBrains Mono', monospace; font-size: .6rem; color: var(--t3); }
     .now-badge {
-      font-family: var(--fm); font-size: .53rem; letter-spacing: .06em;
-      color: var(--gold); background: var(--goldb);
-      border: 1px solid rgba(233,165,32,.22); padding: 2px 6px; border-radius: 3px;
+      font-family: 'JetBrains Mono', monospace; font-size: .52rem;
+      letter-spacing: .07em; color: var(--gold);
+      background: var(--goldb); border: 1px solid var(--goldbr);
+      padding: 2px 7px; border-radius: 3px;
     }
 
-    /* ═══════════════════════════════════════
+    /* ═══════════════════════════════════════════
        HISTORY
-    ═══════════════════════════════════════ */
-    .hist-list { display: flex; flex-direction: column; gap: 5px; }
+    ═══════════════════════════════════════════ */
+    .hist-list { display: flex; flex-direction: column; gap: 4px; }
     .hist-item {
       display: flex; align-items: center; gap: 10px;
-      padding: 9px 12px; border: 1px solid var(--bdr);
-      border-radius: var(--r); background: var(--s1); font-size: .82rem;
+      padding: 10px 13px; border: 1px solid var(--bdr);
+      border-radius: 5px; background: var(--s1); transition: background .3s;
     }
     .hist-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
-    .hist-dot.rb { background: var(--rb); }
-    .hist-dot.hv { background: var(--hv); }
-    .hist-map  { flex: 1; font-weight: 500; }
-    .hist-time { font-family: var(--fm); font-size: .6rem; color: var(--t3); }
-    .hist-empty { font-family: var(--fm); font-size: .63rem; color: var(--t3); padding: 8px 0; }
-
-    /* ═══════════════════════════════════════
-       CARDS (Notifications, Settings)
-    ═══════════════════════════════════════ */
-    .card { border: 1px solid var(--bdr); border-radius: var(--r); background: var(--s1); padding: 14px; }
-    .card-desc { font-size: .82rem; color: var(--t2); line-height: 1.65; margin-bottom: 12px; }
-    .card-desc strong { color: var(--t1); font-weight: 600; display: block; margin-bottom: 2px; }
-
-    .btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
-    .btn {
-      font-family: var(--fb); font-weight: 600; font-size: .8rem;
-      letter-spacing: .03em; padding: 8px 14px;
-      border-radius: var(--r); border: 1px solid transparent; transition: .15s;
+    [data-theme="dark"] .hist-dot.rb { background:var(--rb); box-shadow:0 0 6px var(--rb); }
+    [data-theme="dark"] .hist-dot.hv { background:var(--hv); box-shadow:0 0 6px var(--hv); }
+    [data-theme="light"] .hist-dot.rb { background:var(--rb); }
+    [data-theme="light"] .hist-dot.hv { background:var(--hv); }
+    .hist-map  { flex: 1; font-size: .86rem; font-weight: 600; }
+    .hist-time { font-family: 'JetBrains Mono', monospace; font-size: .6rem; color: var(--t3); }
+    .hist-empty {
+      font-family: 'JetBrains Mono', monospace; font-size: .62rem;
+      color: var(--t3); padding: 12px 0; text-align: center;
     }
-    .btn-primary { background: var(--gold); color: #000; border-color: var(--gold); }
-    .btn-primary:hover { filter: brightness(1.08); }
-    .btn-primary:disabled { opacity: .45; cursor: default; filter: none; }
-    .btn-ghost  { background: transparent; border-color: var(--bdrhi); color: var(--t2); }
-    .btn-ghost:hover { border-color: var(--t2); color: var(--t1); }
-    .btn-ghost.on-rb { border-color: var(--rb); color: var(--rb); }
-    .btn-ghost.on-hv { border-color: var(--hv); color: var(--hv); }
-    .notif-status { font-family: var(--fm); font-size: .6rem; color: var(--t3); letter-spacing: .04em; }
 
-    /* ── Settings ── */
-    .settings-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-    .settings-info { flex: 1; }
-    .settings-info strong { display: block; font-weight: 600; font-size: .88rem; margin-bottom: 2px; }
-    .settings-info span   { font-size: .76rem; color: var(--t2); }
-    .dur-ctrl { display: flex; align-items: center; gap: 8px; }
-    .dur-btn {
-      width: 28px; height: 28px;
-      border: 1px solid var(--bdrhi); border-radius: 4px;
-      background: transparent; color: var(--t1); font-size: 1rem;
-      display: flex; align-items: center; justify-content: center; transition: .15s;
-    }
-    .dur-btn:hover { border-color: var(--gold); color: var(--gold); }
-    .dur-val { font-family: var(--fm); font-size: .86rem; min-width: 48px; text-align: center; }
-
-    /* ═══════════════════════════════════════
-       PiP OVERLAY CARD
-    ═══════════════════════════════════════ */
-    .pip-card {
-      border: 1px solid var(--bdr); border-radius: var(--r);
-      background: var(--s1); padding: 14px;
-      display: flex; gap: 13px; align-items: flex-start;
-    }
-    .pip-icon {
-      width: 40px; height: 40px; border-radius: 8px; flex-shrink: 0;
-      background: var(--goldb); border: 1px solid rgba(233,165,32,.18);
+    /* ═══════════════════════════════════════════
+       AD ZONE
+    ═══════════════════════════════════════════ */
+    .ad-zone {
+      min-height: 100px; border: 1px dashed var(--bdr); border-radius: 5px;
       display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
     }
-    .pip-body { flex: 1; }
-    .pip-body strong { display: block; font-weight: 600; font-size: .9rem; margin-bottom: 3px; }
-    .pip-body p { font-size: .78rem; color: var(--t2); line-height: 1.55; margin-bottom: 10px; }
-    .pip-btns { display: flex; gap: 8px; flex-wrap: wrap; }
-    .pip-btn {
-      font-family: var(--fb); font-weight: 600; font-size: .78rem;
-      padding: 7px 14px; border-radius: var(--r); border: 1px solid; transition: .15s; cursor: pointer;
+    .ad-lbl {
+      font-family: 'JetBrains Mono', monospace; font-size: .5rem;
+      letter-spacing: .12em; color: var(--t3); pointer-events: none;
     }
-    .pip-btn-start { background: var(--gold); color: #000; border-color: var(--gold); }
-    .pip-btn-start:hover { filter: brightness(1.08); }
-    .pip-btn-start:disabled { opacity: .4; cursor: default; filter: none; }
-    .pip-btn-stop { background: transparent; border-color: var(--bdrhi); color: var(--t2); }
-    .pip-btn-stop:hover { border-color: var(--red); color: var(--red); }
-    .pip-status { font-family: var(--fm); font-size: .6rem; color: var(--t3); margin-top: 8px; letter-spacing: .04em; }
-    .pip-status.active { color: var(--rb); }
 
-    /* ═══════════════════════════════════════
+    /* ═══════════════════════════════════════════
+       ALERTES
+    ═══════════════════════════════════════════ */
+    .card {
+      border: 1px solid var(--bdr); border-radius: 6px;
+      background: var(--s1); padding: 14px 15px;
+      transition: background .3s, border-color .3s;
+    }
+    .card-title {
+      font-weight: 700; font-size: .9rem; margin-bottom: 4px;
+    }
+    .card-sub { font-size: .78rem; color: var(--t2); line-height: 1.6; margin-bottom: 12px; }
+    .btn-row { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 9px; }
+    .btn {
+      font-family: 'Syne', sans-serif; font-weight: 700; font-size: .78rem;
+      padding: 8px 14px; border-radius: 4px; border: 1px solid transparent;
+      transition: .15s; cursor: pointer; letter-spacing: .01em;
+    }
+    .btn-primary { background: var(--gold); color: #fff; border-color: var(--gold); }
+    [data-theme="light"] .btn-primary { color: #000; }
+    .btn-primary:hover { filter: brightness(1.08); }
+    .btn-primary:disabled { opacity: .4; cursor: default; filter: none; }
+    .btn-ghost  { background: transparent; border-color: var(--bdrhi); color: var(--t2); }
+    .btn-ghost:hover  { border-color: var(--t2); color: var(--t1); }
+    .btn-ghost.on-rb  { border-color: var(--rb); color: var(--rb); }
+    .btn-ghost.on-hv  { border-color: var(--hv); color: var(--hv); }
+    .status-text { font-family: 'JetBrains Mono', monospace; font-size: .6rem; color: var(--t3); }
+
+    /* ═══════════════════════════════════════════
        AFFILIATE
-    ═══════════════════════════════════════ */
-    .aff-card { border: 1px solid var(--bdr); border-radius: var(--r); background: var(--s1); padding: 14px; display: flex; gap: 12px; }
+    ═══════════════════════════════════════════ */
+    .aff-card {
+      border: 1px solid var(--bdr); border-radius: 6px;
+      background: var(--s1); padding: 13px 15px;
+      display: flex; gap: 12px; align-items: flex-start;
+      transition: background .3s;
+    }
     .aff-icon {
-      width: 38px; height: 38px; border-radius: 6px; flex-shrink: 0;
-      background: var(--goldb); border: 1px solid rgba(233,165,32,.18);
+      width: 36px; height: 36px; border-radius: 6px; flex-shrink: 0;
+      background: var(--goldb); border: 1px solid var(--goldbr);
       display: flex; align-items: center; justify-content: center; color: var(--gold);
     }
-    .aff-body { flex: 1; }
-    .aff-body strong { display: block; font-weight: 600; font-size: .88rem; margin-bottom: 3px; }
-    .aff-body p { font-size: .78rem; color: var(--t2); line-height: 1.55; margin-bottom: 8px; }
-    .aff-link { font-family: var(--fm); font-size: .66rem; color: var(--gold); border-bottom: 1px solid rgba(233,165,32,.3); transition: .15s; }
-    .aff-link:hover { color: #ffc84d; }
-    .aff-disc { font-size: .66rem; color: var(--t3); margin-top: 8px; line-height: 1.55; }
+    .aff-body strong { display: block; font-weight: 700; font-size: .87rem; margin-bottom: 2px; }
+    .aff-body p { font-size: .76rem; color: var(--t2); line-height: 1.55; margin-bottom: 7px; }
+    .aff-link {
+      font-family: 'JetBrains Mono', monospace; font-size: .63rem;
+      color: var(--gold); border-bottom: 1px solid var(--goldbr); transition: .15s;
+    }
+    .aff-link:hover { color: var(--t1); }
+    .aff-disc { font-size: .63rem; color: var(--t3); margin-top: 7px; line-height: 1.55; }
 
-    /* ═══════════════════════════════════════
+    /* ═══════════════════════════════════════════
+       FAQ
+    ═══════════════════════════════════════════ */
+    .faq-list { display: flex; flex-direction: column; gap: 4px; }
+    .faq-item {
+      border: 1px solid var(--bdr); border-radius: 5px;
+      background: var(--s1); overflow: hidden;
+      transition: background .3s, border-color .3s;
+    }
+    .faq-q {
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+      padding: 12px 14px; cursor: pointer;
+      font-size: .84rem; font-weight: 600; transition: color .15s;
+    }
+    .faq-q:hover { color: var(--gold); }
+    .faq-chevron { flex-shrink: 0; color: var(--t3); transition: transform .25s; }
+    .faq-item.open .faq-chevron { transform: rotate(180deg); }
+    .faq-a {
+      max-height: 0; overflow: hidden;
+      transition: max-height .3s ease, padding .3s;
+      font-size: .8rem; color: var(--t2); line-height: 1.75;
+    }
+    .faq-item.open .faq-a { max-height: 300px; padding: 0 14px 13px; }
+
+    /* ═══════════════════════════════════════════
        FOOTER
-    ═══════════════════════════════════════ */
-    footer { margin-top: 44px; padding-top: 20px; border-top: 1px solid var(--bdr); }
-    .footer-brand { font-family: var(--fd); font-weight: 900; font-size: 1.1rem; color: var(--t3); margin-bottom: 10px; }
-    .footer-disc { font-size: .72rem; color: var(--t3); line-height: 1.78; margin-bottom: 14px; }
-    .footer-disc a { color: var(--t2); text-decoration: underline; }
+    ═══════════════════════════════════════════ */
+    footer {
+      margin-top: 44px; padding-top: 20px; border-top: 1px solid var(--bdr);
+    }
+    .footer-logo {
+      font-family: 'Bebas Neue', sans-serif; font-size: 1.15rem;
+      letter-spacing: .06em; color: var(--t3); margin-bottom: 10px;
+    }
+    .footer-logo span { color: var(--gold); }
+    .footer-disc { font-size: .7rem; color: var(--t3); line-height: 1.82; margin-bottom: 14px; }
     .footer-links { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-bottom: 16px; }
     .footer-link { font-size: .72rem; color: var(--t3); transition: .15s; }
     .footer-link:hover { color: var(--t1); }
-    .footer-copy { font-family: var(--fm); font-size: .55rem; letter-spacing: .05em; color: var(--t3); padding-bottom: 24px; }
+    .footer-copy {
+      font-family: 'JetBrains Mono', monospace; font-size: .54rem;
+      letter-spacing: .06em; color: var(--t3); padding-bottom: 24px;
+    }
 
-    /* ═══════════════════════════════════════
-       MODALS (bottom sheet)
-    ═══════════════════════════════════════ */
-    .modal { position: fixed; inset: 0; background: rgba(0,0,0,.75); z-index: 8000; display: none; align-items: flex-end; justify-content: center; }
+    /* ═══════════════════════════════════════════
+       MODALS
+    ═══════════════════════════════════════════ */
+    .modal {
+      position: fixed; inset: 0; background: rgba(0,0,0,.72);
+      z-index: 9000; display: none; align-items: flex-end; justify-content: center;
+    }
     .modal.open { display: flex; }
-    .modal-sheet { background: var(--s1); border-top: 1px solid var(--bdrhi); border-radius: 12px 12px 0 0; width: 100%; max-width: 560px; max-height: 82dvh; overflow-y: auto; padding: 20px 20px 44px; }
+    .modal-sheet {
+      background: var(--s1); border-top: 1px solid var(--bdrhi);
+      border-radius: 14px 14px 0 0; width: 100%; max-width: 560px;
+      max-height: 82dvh; overflow-y: auto; padding: 20px 20px 44px;
+      transition: background .3s;
+    }
     .modal-handle { width: 36px; height: 4px; background: var(--bdrhi); border-radius: 99px; margin: 0 auto 18px; }
-    .modal-title { font-family: var(--fd); font-weight: 900; font-size: 1.45rem; letter-spacing: .03em; margin-bottom: 14px; }
-    .modal-content { font-size: .8rem; color: var(--t2); line-height: 1.82; }
-    .modal-content h3 { color: var(--t1); font-size: .86rem; margin: 16px 0 5px; font-weight: 600; }
+    .modal-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.7rem; letter-spacing: .05em; margin-bottom: 14px; }
+    .modal-content { font-size: .8rem; color: var(--t2); line-height: 1.85; }
+    .modal-content h3 { color: var(--t1); font-size: .86rem; margin: 16px 0 4px; font-weight: 700; }
     .modal-content p  { margin-bottom: 8px; }
     .modal-content strong { color: var(--t1); }
     .modal-content a { color: var(--gold); }
-    .modal-close { display: block; width: 100%; margin-top: 22px; padding: 12px; text-align: center; background: var(--gold); color: #000; font-family: var(--fb); font-weight: 700; font-size: .9rem; border-radius: var(--r); cursor: pointer; transition: .15s; border: none; }
+    .modal-close {
+      display: block; width: 100%; margin-top: 22px; padding: 12px;
+      text-align: center; background: var(--gold); color: #000;
+      font-family: 'Syne', sans-serif; font-weight: 700; font-size: .9rem;
+      border-radius: 5px; cursor: pointer; border: none; transition: .15s;
+    }
     .modal-close:hover { filter: brightness(1.08); }
-    .modal-close.outline { background: transparent; border: 1px solid var(--bdrhi); color: var(--t2); margin-top: 8px; }
-    .modal-close.outline:hover { border-color: var(--t2); color: var(--t1); }
+
+    /* Toast */
+    .toast {
+      position: fixed; bottom: 24px; left: 50%;
+      transform: translateX(-50%) translateY(16px);
+      background: var(--s2); border: 1px solid var(--bdrhi); color: var(--t1);
+      font-family: 'JetBrains Mono', monospace; font-size: .68rem;
+      letter-spacing: .05em; padding: 10px 18px; border-radius: 5px;
+      z-index: 9999; opacity: 0; pointer-events: none;
+      transition: opacity .25s, transform .25s; white-space: nowrap;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   </style>
 
 </head>
 <body>
 
+<div class="toast" id="toast"></div>
+
 <main class="page">
 
-  <!-- ════════════ HEADER ════════════ -->
+  <!-- ══════ HEADER ══════ -->
 
   <header class="header">
-    <div>
-      <div class="logo">ResurgenceTimer<span class="logo-dot">.</span></div>
-      <span class="logo-sub">WARZONE RÉSURGENCE — MAP TRACKER</span>
-    </div>
-    <div class="live-chip"><div class="live-dot"></div>EN DIRECT</div>
+    <div class="logo">ResurgenceTimer<span class="logo-dot">.</span></div>
+    <div class="header-right">
+
+```
+  <!-- Partager -->
+  <button class="hbtn" onclick="shareApp()" title="Partager">
+    <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+      <circle cx="13" cy="2.5" r="1.5"/><circle cx="3" cy="8" r="1.5"/><circle cx="13" cy="13.5" r="1.5"/>
+      <line x1="4.5" y1="7" x2="11.5" y2="3.5"/><line x1="4.5" y1="9" x2="11.5" y2="12.5"/>
+    </svg>
+  </button>
+
+  <!-- Overlay PiP -->
+  <button class="hbtn" id="pipBtn" onclick="togglePiP()" title="Fenêtre flottante">
+    <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+      <rect x="1" y="2" width="14" height="10" rx="1.5"/>
+      <rect x="8" y="7" width="6" height="4" rx="1" fill="currentColor" stroke="none"/>
+    </svg>
+    OVERLAY
+  </button>
+
+  <!-- Thème nuit/jour -->
+  <button class="hbtn" id="themeBtn" onclick="toggleTheme()" title="Thème">
+    <svg id="themeIcon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+      <circle cx="12" cy="12" r="5"/>
+      <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+      <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+    </svg>
+  </button>
+
+  <div class="live-chip"><div class="live-dot"></div>LIVE</div>
+</div>
+```
+
   </header>
 
-  <!-- ════════════ STATUS ════════════ -->
+  <!-- ══════ STATUS BAR ══════ -->
 
-  <div class="status-row">
-    <span>MODE</span><span class="s-sep">/</span><span class="s-hi">RÉSURGENCE</span>
-    <span class="s-sep">·</span>
-    <span id="clock">--:--:--</span>
-    <span class="s-sep">·</span>
-    <span id="tz">--</span>
-    <div class="utc-chip">
-      <svg width="8" height="8" viewBox="0 0 10 10" fill="none">
-        <circle cx="5" cy="5" r="4" stroke="currentColor" stroke-width="1.2"/>
-        <path d="M5 2.5V5L6.5 6.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
-      </svg>
-      UTC SYNC
+  <div class="status-bar">
+    <div class="status-left">
+      <span>RÉSURGENCE</span>
+      <span style="color:var(--bdrhi)">·</span>
+      <span class="s-hi" id="clock">--:--:--</span>
     </div>
+
+```
+<!-- Sélecteur de pays / fuseau -->
+<div class="country-selector">
+  <button class="country-btn" id="countryBtn" onclick="toggleCountryDropdown()">
+    <span id="countryFlag">🌍</span>
+    <span id="countryLabel">Détection...</span>
+    <svg width="8" height="8" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+      <polyline points="2 4 6 8 10 4"/>
+    </svg>
+  </button>
+  <div class="country-dropdown" id="countryDropdown">
+    <div class="country-dropdown-header">FUSEAU HORAIRE</div>
+  </div>
+</div>
+```
+
   </div>
 
-  <!-- ════════════ MAP EN COURS ════════════ -->
-
-  <div class="sec" style="margin-top:20px;">
-    <span class="sec-lbl">MAP EN COURS</span>
-    <div class="sec-line"></div>
-  </div>
+  <!-- ══════ MAP CARD ══════ -->
 
   <div class="map-card" id="mapCard" data-map="rebirth">
     <div class="map-topbar">
-      <span class="map-topbar-lbl">CALL OF DUTY : WARZONE &mdash; RÉSURGENCE</span>
-      <span class="map-slot-badge" id="slotBadge">SLOT 1/2</span>
+      <span class="map-topbar-lbl">CALL OF DUTY : WARZONE — RÉSURGENCE</span>
+      <span class="map-slot" id="slotBadge">SLOT 1/2</span>
     </div>
 
 ```
 <div class="map-visual mv-rb" id="mapVis">
-  <!-- POI tags -->
-  <div class="map-pois" id="mapPois">
-    <!-- rempli par JS -->
-  </div>
-  <div class="map-corner" id="mapCorner">ACTIF</div>
+  <div class="map-pois" id="mapPois"></div>
+  <div class="map-badge" id="mapBadge">EN COURS</div>
   <div class="map-overlay">
     <span class="map-name" id="mapName">—</span>
-    <div class="map-desc">
-      <span class="map-desc-text" id="mapRegion">—</span>
-      <div class="map-desc-sep"></div>
-      <span class="map-desc-text" id="mapSize">—</span>
-    </div>
+    <div class="map-tags" id="mapTags"></div>
   </div>
-  <div class="map-copyright">© Activision Publishing, Inc.</div>
+  <div class="map-copy">© Activision Publishing, Inc.</div>
 </div>
 
 <div class="timer-block">
-  <div class="timer-row">
+  <div>
     <span class="timer-lbl">PROCHAIN CHANGEMENT DANS</span>
-    <span class="timer-val" id="timerVal">--:--</span>
+    <div class="timer-val" id="timerVal">--:--</div>
   </div>
+  <div>
+    <span class="next-lbl">PROCHAINE MAP</span>
+    <div class="next-name rb" id="nextName">—</div>
+  </div>
+</div>
+
+<div class="prog-wrap">
   <div class="prog-track">
     <div class="prog-fill" id="progFill" style="width:0%"></div>
   </div>
-  <div class="advice-row">
-    <div class="adv-pip" id="advPip"></div>
-    <span id="advInline">Calcul en cours…</span>
+</div>
+
+<div class="advice go" id="advice">
+  <div class="advice-icon" id="advIcon"></div>
+  <div>
+    <div class="advice-head" id="advHead">—</div>
+    <div class="advice-sub"  id="advSub">—</div>
   </div>
 </div>
 ```
 
   </div>
 
-  <!-- ════════════ NEXT + ADVICE ════════════ -->
-
-  <div class="dual-row">
-    <div class="info-card">
-      <span class="info-lbl">PROCHAINE MAP</span>
-      <div class="next-name rb" id="nextName">—</div>
-    </div>
-    <div class="adv-card go" id="advCard">
-      <div class="adv-head" id="advHead">—</div>
-      <div class="adv-body" id="advBody">—</div>
-    </div>
-  </div>
-
-  <!-- ════════════ SYNC BANNER ════════════ -->
-
-  <div class="sync-banner">
-    <div class="sync-icon">
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" color="var(--hv)">
-        <circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.2"/>
-        <path d="M8 3.5V8L10.5 10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
-        <path d="M2 8a6 6 0 0 1 6-6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-dasharray="2 1.5"/>
-      </svg>
-    </div>
-    <div class="sync-text">
-      <strong>Timer synchronisé mondialement —</strong>
-      Basé sur l'heure universelle UTC. Un joueur à Paris, Tokyo ou New York voit exactement le même timer au même instant.
-    </div>
-  </div>
-
-  <!-- AD 1 -->
-
-  <div class="ad-zone">
-    <span class="ad-lbl">PUBLICITÉ</span>
-    <!-- Google AdSense — à insérer après approbation
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-VOTRE_ID"></script>
-    <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-VOTRE_ID" data-ad-slot="SLOT_ID" data-ad-format="auto" data-full-width-responsive="true"></ins>
-    <script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
-    -->
-  </div>
-
-  <!-- ════════════ ROTATION DU JOUR ════════════ -->
+  <!-- ══════ ROTATION DU JOUR ══════ -->
 
   <div class="sec"><span class="sec-lbl">ROTATION DU JOUR</span><div class="sec-line"></div></div>
   <div class="sched-list" id="schedList"></div>
 
-  <!-- ════════════ HISTORIQUE ════════════ -->
+  <!-- ══════ PUB ══════ -->
+
+  <div class="ad-zone" style="margin-top:22px;">
+    <span class="ad-lbl">PUBLICITÉ</span>
+    <!--
+      Coller ici votre code Google AdSense après approbation.
+    -->
+  </div>
+
+  <!-- ══════ HISTORIQUE ══════ -->
 
   <div class="sec"><span class="sec-lbl">HISTORIQUE DE SESSION</span><div class="sec-line"></div></div>
   <div class="hist-list" id="histList">
     <div class="hist-empty">Aucun changement depuis l'ouverture de la page.</div>
   </div>
 
-  <!-- AD 2 -->
-
-  <div class="ad-zone" style="margin-top:22px;">
-    <span class="ad-lbl">PUBLICITÉ</span>
-  </div>
-
-  <!-- ════════════ MODE OVERLAY (PiP) ════════════ -->
-
-  <div class="sec"><span class="sec-lbl">MODE OVERLAY</span><div class="sec-line"></div></div>
-  <div class="pip-card">
-    <div class="pip-icon">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="2" y="3" width="20" height="14" rx="2"/>
-        <rect x="12" y="10" width="9" height="6" rx="1" fill="rgba(233,165,32,.15)"/>
-      </svg>
-    </div>
-    <div class="pip-body">
-      <strong>Fenêtre flottante — Picture-in-Picture</strong>
-      <p>Affiche le timer dans une petite fenêtre qui reste visible par-dessus tout — même pendant ta partie en mode fenêtré.</p>
-      <div class="pip-btns">
-        <button class="pip-btn pip-btn-start" id="pipStartBtn" onclick="startPiP()">Activer l'overlay</button>
-        <button class="pip-btn pip-btn-stop"  id="pipStopBtn"  onclick="stopPiP()" style="display:none">Désactiver</button>
-      </div>
-      <div class="pip-status" id="pipStatus">Vérification de compatibilité…</div>
-    </div>
-  </div>
-
-  <!-- ════════════ ALERTES ════════════ -->
+  <!-- ══════ ALERTES ══════ -->
 
   <div class="sec"><span class="sec-lbl">ALERTES MAP</span><div class="sec-line"></div></div>
   <div class="card">
-    <div class="card-desc">
-      <strong>Sois notifié dès que ta map arrive.</strong>
-      Active les notifications navigateur puis sélectionne la map pour laquelle tu veux être alerté.
-    </div>
+    <div class="card-title">Notifications de rotation</div>
+    <div class="card-sub">Reçois une alerte dès que ta map préférée revient.</div>
     <div class="btn-row">
-      <button class="btn btn-primary" id="notifBtn" onclick="requestNotif()">Activer les notifications</button>
+      <button class="btn btn-primary" id="notifBtn" onclick="requestNotif()">Activer</button>
     </div>
     <div class="btn-row">
       <button class="btn btn-ghost" id="btnRb" onclick="toggleAlert('rebirth')">Rebirth Island</button>
       <button class="btn btn-ghost" id="btnHv" onclick="toggleAlert('haven')">Haven's Hollow</button>
     </div>
-    <div class="notif-status" id="notifStatus">Notifications non configurées.</div>
+    <div class="status-text" id="notifStatus">Non configuré.</div>
   </div>
 
-  <!-- ════════════ PARAMÈTRES ════════════ -->
-
-  <div class="sec"><span class="sec-lbl">PARAMÈTRES</span><div class="sec-line"></div></div>
-  <div class="card">
-    <div class="settings-row">
-      <div class="settings-info">
-        <strong>Durée de rotation</strong>
-        <span>Ajuste si Activision modifie la durée officielle.</span>
-      </div>
-      <div class="dur-ctrl">
-        <button class="dur-btn" onclick="changeDur(-5)">&#x2212;</button>
-        <span class="dur-val"><span id="durVal">25</span> min</span>
-        <button class="dur-btn" onclick="changeDur(+5)">+</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ════════════ SETUP GAMING ════════════ -->
+  <!-- ══════ SETUP GAMING ══════ -->
 
   <div class="sec"><span class="sec-lbl">SETUP GAMING</span><div class="sec-line"></div></div>
   <div class="aff-card">
     <div class="aff-icon">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
         <rect x="2" y="6" width="20" height="12" rx="2"/>
         <circle cx="8.5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="15.5" cy="12" r="1"/>
       </svg>
     </div>
     <div class="aff-body">
       <strong>Optimise ton setup Warzone</strong>
-      <p>Souris gaming, casque 7.1, écran 144 Hz — l'équipement des meilleurs joueurs Résurgence.</p>
-      <a class="aff-link" href="https://www.amazon.fr/s?k=gaming+warzone+setup&tag=VOTRE_TAG_ICI" target="_blank" rel="noopener sponsored">Voir la sélection sur Amazon &rarr;</a>
-      <div class="aff-disc">Lien affilié Amazon — commission perçue sur achats éligibles, sans surcoût pour vous. En tant que Partenaire Amazon EU, nous bénéficions des achats réalisés via ce lien.</div>
+      <p>Souris, casque, écran 144 Hz — l'équipement des meilleurs joueurs Résurgence.</p>
+      <a class="aff-link" href="https://www.amazon.fr/s?k=gaming+warzone+setup&tag=VOTRE_TAG_ICI" target="_blank" rel="noopener sponsored">Voir la sélection Amazon &rarr;</a>
+      <div class="aff-disc">Lien affilié — commission perçue sans surcoût. Partenaire Amazon EU.</div>
     </div>
   </div>
 
-  <!-- ════════════ FOOTER ════════════ -->
+  <!-- ══════ FAQ ══════ -->
+
+  <div class="sec"><span class="sec-lbl">FAQ</span><div class="sec-line"></div></div>
+  <div class="faq-list">
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">
+        Comment fonctionne le timer ?
+        <svg class="faq-chevron" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="3 6 8 11 13 6"/></svg>
+      </div>
+      <div class="faq-a">Le timer est basé sur l'heure universelle UTC. Il est identique pour tous les joueurs du monde — seuls les horaires de la rotation s'affichent dans ton heure locale. Tu peux choisir ton pays dans la barre de statut.</div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">
+        Rebirth Island vs Haven's Hollow ?
+        <svg class="faq-chevron" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="3 6 8 11 13 6"/></svg>
+      </div>
+      <div class="faq-a">Rebirth Island est une île-prison industrielle avec des combats rapprochés intenses. Haven's Hollow est une ville des Appalaches avec des zones plus ouvertes. Elles alternent toutes les <span id="faqDur">25</span> minutes.</div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">
+        Le timer est-il toujours exact ?
+        <svg class="faq-chevron" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="3 6 8 11 13 6"/></svg>
+      </div>
+      <div class="faq-a">Il est basé sur la durée de rotation officielle connue. Activision peut modifier cette durée lors d'événements spéciaux. Si tu constates un décalage, ajuste la durée via Paramètres ci-dessous.</div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">
+        Comment activer la fenêtre flottante ?
+        <svg class="faq-chevron" width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="3 6 8 11 13 6"/></svg>
+      </div>
+      <div class="faq-a">Clique sur OVERLAY en haut à droite. La fenêtre reste visible par-dessus ta partie en mode fenêtré. Compatible Chrome, Edge et Safari 14+.</div>
+    </div>
+  </div>
+
+  <!-- ══════ PARAMÈTRES ══════ -->
+
+  <div class="sec"><span class="sec-lbl">PARAMÈTRES</span><div class="sec-line"></div></div>
+  <div class="card" style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+    <div>
+      <div style="font-weight:700;font-size:.87rem;margin-bottom:2px;">Durée de rotation</div>
+      <div style="font-size:.76rem;color:var(--t2);">Ajuste si Activision modifie la durée.</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <button onclick="changeDur(-5)" class="dur-btn">−</button>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:.86rem;min-width:52px;text-align:center;"><span id="durVal">25</span> min</span>
+      <button onclick="changeDur(+5)" class="dur-btn">+</button>
+    </div>
+  </div>
+  <style>
+    .dur-btn{width:28px;height:28px;border:1px solid var(--bdrhi);border-radius:4px;background:transparent;color:var(--t1);font-size:1rem;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.15s;}
+    .dur-btn:hover{border-color:var(--gold);color:var(--gold);}
+  </style>
+
+  <!-- ══════ FOOTER ══════ -->
 
   <footer>
-    <div class="footer-brand">ResurgenceTimer<span style="color:var(--gold)">.</span></div>
+    <div class="footer-logo">ResurgenceTimer<span>.</span></div>
     <div class="footer-disc">
-      Site fan non officiel &mdash; non affilié, sponsorisé ou approuvé par Activision Publishing, Inc.<br>
-      Call of Duty&reg;, Warzone&reg;, Rebirth Island et Haven's Hollow sont des marques déposées d'Activision Publishing, Inc. Tous droits réservés.<br>
-      Les rotations affichées sont des estimations indicatives et peuvent différer des rotations effectives en jeu.<br>
-      Ce site participe au Programme Partenaires d'Amazon EU. Amazon et le logo Amazon sont des marques d'Amazon.com, Inc. ou de ses filiales.
+      Site fan non officiel — non affilié, sponsorisé ou approuvé par Activision Publishing, Inc.<br>
+      Call of Duty®, Warzone®, Rebirth Island et Haven's Hollow sont des marques déposées d'Activision Publishing, Inc.<br>
+      Les rotations affichées sont des estimations et peuvent différer des rotations effectives.<br>
+      Ce site participe au Programme Partenaires d'Amazon EU.
     </div>
     <div class="footer-links">
       <a class="footer-link" href="#" onclick="openModal('privacy');return false;">Politique de confidentialité</a>
       <a class="footer-link" href="#" onclick="openModal('terms');return false;">Conditions d'utilisation</a>
       <a class="footer-link" href="mailto:contact@resurgencetimer.com">Contact</a>
     </div>
-    <div class="footer-copy">&copy; <span id="year"></span> ResurgenceTimer.com &mdash; Tous droits réservés &mdash; Hébergé sur Render</div>
+    <div class="footer-copy">© <span id="year"></span> ResurgenceTimer.com</div>
   </footer>
 
 </main>
 
-<!-- ════════════ MODAL CONFIDENTIALITÉ ════════════ -->
+<!-- ══════ MODALS ══════ -->
 
 <div class="modal" id="privacyModal">
   <div class="modal-sheet">
     <div class="modal-handle"></div>
-    <div class="modal-title">Politique de confidentialité</div>
+    <div class="modal-title">Confidentialité</div>
     <div class="modal-content">
       <p><strong>Dernière mise à jour :</strong> Avril 2026</p>
-      <h3>1. Éditeur</h3>
-      <p>ResurgenceTimer.com est édité par un particulier. Contact : <a href="mailto:contact@resurgencetimer.com">contact@resurgencetimer.com</a>. Hébergement : Render.com, San Francisco, CA, USA.</p>
-      <h3>2. Données collectées</h3>
-      <p>Ce site ne collecte aucune donnée personnelle. Aucun compte, aucun formulaire. Vos préférences (durée de rotation, alertes) sont stockées uniquement dans votre navigateur via <code>localStorage</code> et ne sont jamais transmises.</p>
-      <h3>3. Cookies</h3>
-      <p>Ce site n'utilise actuellement aucun cookie tiers. Si Google AdSense ou Analytics est activé à l'avenir, un bandeau de consentement conforme au RGPD sera ajouté avant toute activation.</p>
-      <h3>4. Liens affiliés Amazon</h3>
-      <p>Ce site contient des liens affiliés vers Amazon.fr. Cliquer sur ces liens peut déposer des cookies de suivi de conversion gérés par Amazon EU S.à.r.l. Aucune donnée personnelle n'est collectée de notre côté.</p>
-      <h3>5. Vos droits (RGPD)</h3>
-      <p>Conformément au RGPD (UE 2016/679), vous disposez d'un droit d'accès, de rectification et d'effacement. Contactez-nous à <a href="mailto:contact@resurgencetimer.com">contact@resurgencetimer.com</a>. Réclamation possible auprès de la CNIL (cnil.fr).</p>
+      <h3>Éditeur</h3>
+      <p>Contact : <a href="mailto:contact@resurgencetimer.com">contact@resurgencetimer.com</a>. Hébergé sur Render.com.</p>
+      <h3>Données collectées</h3>
+      <p>Aucune donnée personnelle. Vos préférences sont stockées uniquement dans votre navigateur.</p>
+      <h3>Cookies</h3>
+      <p>Aucun cookie tiers actif. Si Google AdSense est activé, un bandeau RGPD sera ajouté. Les liens Amazon peuvent déposer des cookies de conversion.</p>
+      <h3>Vos droits (RGPD)</h3>
+      <p>Contact : <a href="mailto:contact@resurgencetimer.com">contact@resurgencetimer.com</a> — <a href="https://cnil.fr" target="_blank" rel="noopener">cnil.fr</a></p>
     </div>
     <button class="modal-close" onclick="closeModal('privacy')">Fermer</button>
   </div>
 </div>
 
-<!-- ════════════ MODAL CONDITIONS ════════════ -->
-
 <div class="modal" id="termsModal">
   <div class="modal-sheet">
     <div class="modal-handle"></div>
-    <div class="modal-title">Conditions d'utilisation</div>
+    <div class="modal-title">Conditions</div>
     <div class="modal-content">
       <p><strong>Dernière mise à jour :</strong> Avril 2026</p>
-      <h3>1. Nature du site</h3>
-      <p>ResurgenceTimer.com est un site fan non officiel et indépendant, destiné à informer les joueurs sur la rotation estimée des maps du mode Résurgence de Call of Duty&reg; : Warzone&reg;.</p>
-      <h3>2. Propriété intellectuelle</h3>
-      <p>Call of Duty&reg;, Warzone&reg;, Rebirth Island, Haven's Hollow et tous les éléments associés sont la propriété exclusive d'<strong>Activision Publishing, Inc.</strong> Ce site n'est ni affilié, ni approuvé, ni sponsorisé par Activision.</p>
-      <h3>3. Exactitude des données</h3>
-      <p>Les timers sont des estimations. Activision peut modifier la rotation à tout moment. ResurgenceTimer.com ne garantit pas l'exactitude des informations et décline toute responsabilité pour les décisions prises sur leur base.</p>
-      <h3>4. Publicité et affiliation</h3>
-      <p>Ce site est susceptible d'afficher des publicités via Google AdSense. Il contient des liens affiliés vers Amazon.fr ; une commission peut être perçue sur les achats éligibles, sans surcoût pour l'acheteur.</p>
-      <h3>5. Droit applicable</h3>
-      <p>Les présentes conditions sont régies par le droit français. Tout litige sera soumis aux juridictions françaises compétentes.</p>
+      <h3>Nature du site</h3>
+      <p>Site fan non officiel, non affilié à Activision Publishing, Inc.</p>
+      <h3>Propriété intellectuelle</h3>
+      <p>Call of Duty®, Warzone®, Rebirth Island, Haven's Hollow — marques d'<strong>Activision Publishing, Inc.</strong></p>
+      <h3>Exactitude</h3>
+      <p>Les timers sont des estimations. Activision peut modifier la rotation sans préavis.</p>
+      <h3>Publicité & Affiliation</h3>
+      <p>Publicités Google AdSense. Liens affiliés Amazon.fr — commission sur achats éligibles, sans surcoût.</p>
+      <h3>Droit applicable</h3>
+      <p>Droit français. Juridictions françaises compétentes.</p>
     </div>
     <button class="modal-close" onclick="closeModal('terms')">Fermer</button>
   </div>
 </div>
 
-<!-- ════════════ JAVASCRIPT ════════════ -->
-
 <script>
 'use strict';
 
-/* ── CONFIG ─────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════
+   MAPS CONFIG
+═══════════════════════════════════════ */
 const MAPS = [
   {
-    id:     'rebirth',
-    name:   'Rebirth Island',
-    vis:    'mv-rb',
-    slot:   '1/2',
-    region: 'ARCHIPEL DE LA MER NOIRE',
-    size:   'PETITE — 11 POI',
-    cls:    'rb',
-    pois:   ['PRISON', 'DOCK', 'HEADQUARTERS', 'INDUSTRY'],
+    id:'rebirth', name:'Rebirth Island', vis:'mv-rb', cls:'rb', slot:'1/2',
+    tags:['PRISON','DOCK','HEADQUARTERS','BIOWEAPON LAB'],
+    pois:['PRISON BLOCK','DOCK','HQ','BIO LAB'],
   },
   {
-    id:     'haven',
-    name:   "Haven's Hollow",
-    vis:    'mv-hv',
-    slot:   '2/2',
-    region: 'APPALACHES — VIRGINIE-OCCIDENTALE',
-    size:   'MOYENNE — 9 POI',
-    cls:    'hv',
-    pois:   ['MAIN STREET', 'MANSION', 'LUMBER MILL', 'CHURCH'],
+    id:'haven', name:"Haven's Hollow", vis:'mv-hv', cls:'hv', slot:'2/2',
+    tags:['MAIN STREET','MANSION','LUMBER MILL','CHURCH'],
+    pois:['MAIN STREET','MANSION','LUMBER','CHURCH'],
   },
 ];
 
-let ROT_MIN = parseInt(localStorage.getItem('rt_dur') || '25', 10);
-let ALERTS  = JSON.parse(localStorage.getItem('rt_alerts') || '[]');
+/* ═══════════════════════════════════════
+   PAYS / FUSEAUX
+═══════════════════════════════════════ */
+const COUNTRIES = [
+  { flag:'🇫🇷', name:'France',        tz:'Europe/Paris',              label:'Paris' },
+  { flag:'🇧🇪', name:'Belgique',       tz:'Europe/Brussels',           label:'Bruxelles' },
+  { flag:'🇨🇭', name:'Suisse',         tz:'Europe/Zurich',             label:'Zurich' },
+  { flag:'🇨🇦', name:'Canada',         tz:'America/Montreal',          label:'Montréal' },
+  { flag:'🇲🇦', name:'Maroc',          tz:'Africa/Casablanca',         label:'Casablanca' },
+  { flag:'🇩🇿', name:'Algérie',        tz:'Africa/Algiers',            label:'Alger' },
+  { flag:'🇹🇳', name:'Tunisie',        tz:'Africa/Tunis',              label:'Tunis' },
+  { flag:'🇬🇧', name:'Royaume-Uni',    tz:'Europe/London',             label:'Londres' },
+  { flag:'🇩🇪', name:'Allemagne',      tz:'Europe/Berlin',             label:'Berlin' },
+  { flag:'🇪🇸', name:'Espagne',        tz:'Europe/Madrid',             label:'Madrid' },
+  { flag:'🇮🇹', name:'Italie',         tz:'Europe/Rome',               label:'Rome' },
+  { flag:'🇳🇱', name:'Pays-Bas',       tz:'Europe/Amsterdam',          label:'Amsterdam' },
+  { flag:'🇵🇹', name:'Portugal',       tz:'Europe/Lisbon',             label:'Lisbonne' },
+  { flag:'🇷🇺', name:'Russie',         tz:'Europe/Moscow',             label:'Moscou' },
+  { flag:'🇸🇦', name:'Arabie Saoudite',tz:'Asia/Riyadh',               label:'Riyad' },
+  { flag:'🇹🇷', name:'Turquie',        tz:'Europe/Istanbul',           label:'Istanbul' },
+  { flag:'🇺🇸', name:'USA — Est',      tz:'America/New_York',          label:'New York' },
+  { flag:'🇺🇸', name:'USA — Ouest',    tz:'America/Los_Angeles',       label:'Los Angeles' },
+  { flag:'🇧🇷', name:'Brésil',         tz:'America/Sao_Paulo',         label:'São Paulo' },
+  { flag:'🇲🇽', name:'Mexique',        tz:'America/Mexico_City',       label:'Mexico' },
+  { flag:'🇯🇵', name:'Japon',          tz:'Asia/Tokyo',                label:'Tokyo' },
+  { flag:'🇰🇷', name:'Corée du Sud',   tz:'Asia/Seoul',                label:'Séoul' },
+  { flag:'🇦🇺', name:'Australie',      tz:'Australia/Sydney',          label:'Sydney' },
+];
 
-/* ── UTC SYNC ENGINE ────────────────────────────────────────── */
+/* ═══════════════════════════════════════
+   STATE
+═══════════════════════════════════════ */
+let ROT_MIN    = parseInt(localStorage.getItem('rt_dur')    || '25',   10);
+let ALERTS     = JSON.parse(localStorage.getItem('rt_alerts')|| '[]');
+let SELECTED_TZ= localStorage.getItem('rt_tz') || Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+/* Détection auto du pays depuis le fuseau système */
+function detectCountry() {
+  const sysTZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const found  = COUNTRIES.find(c => c.tz === sysTZ);
+  if (found) return found;
+  /* Fallback : France si fuseau non reconnu */
+  return COUNTRIES[0];
+}
+
+let activeCountry = COUNTRIES.find(c => c.tz === SELECTED_TZ) || detectCountry();
+
+/* ═══════════════════════════════════════
+   UTC SYNC ENGINE
+   Le compte à rebours est IDENTIQUE pour
+   tous les joueurs du monde (basé sur UTC).
+   Seuls les horaires de la rotation s'
+   affichent en heure locale du joueur.
+═══════════════════════════════════════ */
 const cycleMs  = () => ROT_MIN * 60 * 1000;
 const getSlot  = () => Math.floor(Date.now() / cycleMs()) % MAPS.length;
 const getSecsL = () => (cycleMs() - (Date.now() % cycleMs())) / 1000;
 
-/* ── DOM ────────────────────────────────────────────────────── */
+/* Format heure locale selon le pays sélectionné */
+function localTime(date) {
+  return date.toLocaleTimeString('fr-FR', {
+    hour: '2-digit', minute: '2-digit',
+    timeZone: activeCountry.tz,
+  });
+}
+
+/* ═══════════════════════════════════════
+   DOM
+═══════════════════════════════════════ */
 const G = id => document.getElementById(id);
 const E = {
-  card:   G('mapCard'),   vis:    G('mapVis'),     corner: G('mapCorner'),
-  name:   G('mapName'),   region: G('mapRegion'),  size:   G('mapSize'),
-  pois:   G('mapPois'),   slot:   G('slotBadge'),
-  timer:  G('timerVal'),  prog:   G('progFill'),   pip:    G('advPip'),
-  advInl: G('advInline'), advCard:G('advCard'),    advH:   G('advHead'),
-  advB:   G('advBody'),   next:   G('nextName'),   clock:  G('clock'),
-  tz:     G('tz'),        durVal: G('durVal'),
-  sched:  G('schedList'), hist:   G('histList'),
-  nStatus:G('notifStatus'), nBtn: G('notifBtn'),
+  card:   G('mapCard'),  vis:    G('mapVis'),   badge: G('mapBadge'),
+  name:   G('mapName'),  tags:   G('mapTags'),  pois:  G('mapPois'),
+  slot:   G('slotBadge'),timer:  G('timerVal'), prog:  G('progFill'),
+  next:   G('nextName'), adv:    G('advice'),   advH:  G('advHead'),
+  advS:   G('advSub'),   advI:   G('advIcon'),  clock: G('clock'),
+  dur:    G('durVal'),   sched:  G('schedList'),hist:  G('histList'),
+  nSt:    G('notifStatus'), nBtn: G('notifBtn'),
 };
 
 let lastSlot = -1;
-const sessionHist = [];
+const hist = [];
 
-/* ── SCHEDULE ───────────────────────────────────────────────── */
+/* ═══════════════════════════════════════
+   THÈME NUIT / JOUR
+═══════════════════════════════════════ */
+const MOON_ICON = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>`;
+const SUN_ICON  = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`;
+
+function initTheme() {
+  /* Auto-detect système, puis préférence sauvegardée */
+  const saved   = localStorage.getItem('rt_theme');
+  const sysPrefs= window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+  const theme   = saved || sysPrefs;
+  applyTheme(theme);
+}
+
+function applyTheme(theme) {
+  document.documentElement.dataset.theme = theme;
+  G('themeIcon').outerHTML = `<span id="themeIcon">${theme === 'dark' ? MOON_ICON : SUN_ICON}</span>`;
+  localStorage.setItem('rt_theme', theme);
+}
+
+function toggleTheme() {
+  const current = document.documentElement.dataset.theme;
+  applyTheme(current === 'dark' ? 'light' : 'dark');
+}
+
+/* Écoute les changements système */
+window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', e => {
+  if (!localStorage.getItem('rt_theme')) applyTheme(e.matches ? 'light' : 'dark');
+});
+
+/* ═══════════════════════════════════════
+   SÉLECTEUR DE PAYS
+═══════════════════════════════════════ */
+function buildCountryDropdown() {
+  const dd = G('countryDropdown');
+  dd.innerHTML = `<div class="country-dropdown-header">FUSEAU HORAIRE</div>` +
+    COUNTRIES.map((c, i) => {
+      const off  = getOffset(c.tz);
+      return `<div class="country-option${c.tz === activeCountry.tz ? ' selected' : ''}" onclick="selectCountry(${i})">
+        <span class="country-flag">${c.flag}</span>
+        <span>${c.name}</span>
+        <span class="country-tz">${off}</span>
+      </div>`;
+    }).join('');
+}
+
+function getOffset(tz) {
+  try {
+    const date  = new Date();
+    const parts = new Intl.DateTimeFormat('en', {timeZone: tz, timeZoneName:'shortOffset'}).formatToParts(date);
+    const tzPart = parts.find(p => p.type === 'timeZoneName');
+    return tzPart ? tzPart.value : '';
+  } catch { return ''; }
+}
+
+function toggleCountryDropdown() {
+  const dd = G('countryDropdown');
+  if (!dd.innerHTML.includes('country-option')) buildCountryDropdown();
+  dd.classList.toggle('open');
+}
+
+function selectCountry(i) {
+  activeCountry = COUNTRIES[i];
+  SELECTED_TZ   = activeCountry.tz;
+  localStorage.setItem('rt_tz', SELECTED_TZ);
+  G('countryFlag').textContent  = activeCountry.flag;
+  G('countryLabel').textContent = activeCountry.label;
+  G('countryDropdown').classList.remove('open');
+  buildCountryDropdown();
+  buildSched();
+}
+
+function syncCountryBtn() {
+  G('countryFlag').textContent  = activeCountry.flag;
+  G('countryLabel').textContent = activeCountry.label;
+}
+
+/* Ferme le dropdown si clic en dehors */
+document.addEventListener('click', e => {
+  if (!e.target.closest('.country-selector')) G('countryDropdown').classList.remove('open');
+});
+
+/* ═══════════════════════════════════════
+   SCHEDULE
+═══════════════════════════════════════ */
 function buildSched() {
   const cycle = cycleMs(), now = Date.now();
   const cur   = Math.floor(now / cycle);
   const back  = Math.ceil((2 * 60) / ROT_MIN);
-  const fwd   = Math.ceil((6 * 60) / ROT_MIN);
+  const fwd   = Math.ceil((7 * 60) / ROT_MIN);
   let html = '';
   for (let i = -back; i <= fwd; i++) {
-    const si   = cur + i;
-    const s    = si * cycle, e = s + cycle;
+    const si   = cur + i, s = si * cycle, e = s + cycle;
     const mi   = ((si % MAPS.length) + MAPS.length) % MAPS.length;
     const map  = MAPS[mi];
-    const isNow= s <= now && now < e;
-    const past = e <= now;
+    const isNow= s <= now && now < e, past = e <= now;
     const t    = localTime(new Date(s));
-    html += `<div class="sched-item${isNow?' now':''}">
+    html += `<div class="sched-item${isNow?' now':past?' past':''}">
       <div class="sched-bar ${past?'past':map.cls}"></div>
-      <div class="sched-map${past?' dim':''}">${map.name}</div>
+      <div class="sched-map">${map.name}</div>
       <div class="sched-time">${t}</div>
       ${isNow?'<span class="now-badge">EN COURS</span>':''}
     </div>`;
@@ -867,55 +1087,64 @@ function buildSched() {
   E.sched.innerHTML = html;
 }
 
-/* ── HISTORY ────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════
+   HISTORY
+═══════════════════════════════════════ */
 function addHist(map) {
-  sessionHist.unshift({ map, time: new Date() });
-  if (sessionHist.length > 8) sessionHist.pop();
+  hist.unshift({map, time: new Date()});
+  if (hist.length > 8) hist.pop();
   renderHist();
 }
 function renderHist() {
-  if (!sessionHist.length) {
-    E.hist.innerHTML = '<div class="hist-empty">Aucun changement depuis l\'ouverture de la page.</div>';
+  if (!hist.length) {
+    E.hist.innerHTML='<div class="hist-empty">Aucun changement depuis l\'ouverture.</div>';
     return;
   }
-  E.hist.innerHTML = sessionHist.map((h, i) => {
-    const t   = h.time.toLocaleTimeString(USER_LOCALE, {hour:'2-digit', minute:'2-digit', second:'2-digit'});
-    const ago = Math.round((Date.now() - h.time) / 60000);
+  E.hist.innerHTML = hist.map((h,i) => {
+    const t   = localTime(h.time) + ' ' + h.time.toLocaleTimeString('fr-FR',{second:'2-digit',timeZone:activeCountry.tz}).slice(-3);
+    const ago = Math.round((Date.now()-h.time)/60000);
     return `<div class="hist-item">
       <div class="hist-dot ${h.map.cls}"></div>
       <div class="hist-map">${h.map.name}</div>
-      <div class="hist-time">${t} &mdash; ${i===0?'En cours':`il y a ${ago} min`}</div>
+      <div class="hist-time">${t} · ${i===0?'En cours':`-${ago} min`}</div>
     </div>`;
   }).join('');
 }
 
-/* ── MAIN LOOP ──────────────────────────────────────────────── */
+/* ═══════════════════════════════════════
+   ADVICE ICONS
+═══════════════════════════════════════ */
+const ICONS = {
+  go:   `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--rb)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 2 11 13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>`,
+  wait: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
+  soon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--hv)" stroke-width="2.5" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
+};
+
+/* ═══════════════════════════════════════
+   MAIN LOOP — 500ms
+═══════════════════════════════════════ */
 function update() {
   const slot  = getSlot(), secsL = getSecsL();
   const total = ROT_MIN * 60, pct = ((total - secsL) / total) * 100;
   const map   = MAPS[slot], next = MAPS[(slot+1) % MAPS.length];
   const m = Math.floor(secsL/60), s = Math.floor(secsL%60);
-  const pad = n => String(Math.floor(n)).padStart(2, '0');
+  const pad = n => String(Math.floor(n)).padStart(2,'0');
 
   /* Map switch */
   if (slot !== lastSlot) {
     if (lastSlot !== -1) {
-      if (ALERTS.includes(map.id) && Notification.permission === 'granted')
-        new Notification(`${map.name} est maintenant active !`, { body:'Rotation en cours — déployez !' });
+      if (ALERTS.includes(map.id) && Notification.permission==='granted')
+        new Notification(`${map.name} est active !`, {body:'La rotation vient de changer.'});
       addHist(map);
     }
-    /* Update card */
-    E.card.dataset.map = map.id;
-    E.vis.className    = `map-visual ${map.vis}`;
+    E.card.dataset.map   = map.id;
+    E.vis.className      = `map-visual ${map.vis}`;
     E.name.textContent   = map.name;
-    E.region.textContent = map.region;
-    E.size.textContent   = map.size;
     E.slot.textContent   = `SLOT ${map.slot}`;
+    E.tags.innerHTML     = map.tags.map(t=>`<div class="map-tag">${t}</div>`).join('');
+    E.pois.innerHTML     = map.pois.map(p=>`<div class="map-poi">${p}</div>`).join('');
     E.next.textContent   = next.name;
     E.next.className     = `next-name ${next.cls}`;
-    E.pip.style.background = `var(--${map.cls})`;
-    /* POI tags */
-    E.pois.innerHTML = map.pois.map(p => `<div class="poi-tag">${p}</div>`).join('');
     buildSched();
     lastSlot = slot;
   }
@@ -924,106 +1153,114 @@ function update() {
   E.timer.textContent = `${pad(m)}:${pad(s)}`;
   E.timer.classList.remove('warn','urgent');
   E.prog.classList.remove('warn','urgent');
-  if (secsL <= 30)       { E.timer.classList.add('urgent'); E.prog.classList.add('urgent'); }
-  else if (secsL <= 120) { E.timer.classList.add('warn');   E.prog.classList.add('warn'); }
-  E.prog.style.width = `${Math.min(pct, 100)}%`;
+  if (secsL<=30)       {E.timer.classList.add('urgent');E.prog.classList.add('urgent');}
+  else if (secsL<=120) {E.timer.classList.add('warn');  E.prog.classList.add('warn');}
+  E.prog.style.width = `${Math.min(pct,100)}%`;
 
-  /* Inline advice */
-  if (secsL <= 30)        E.advInl.textContent = `Rotation dans ${Math.ceil(secsL)}s — ${next.name} arrive`;
-  else if (secsL <= 120)  E.advInl.textContent = `${next.name} dans moins de 2 minutes`;
-  else if (pct < 15)      E.advInl.textContent = `Pleine fenêtre disponible sur ${map.name}`;
-  else                    E.advInl.textContent = `${pad(m)}:${pad(s)} restantes sur ${map.name}`;
-
-  /* Advice card */
-  let cls, head, body;
-  if (secsL <= 60) {
+  /* Advice */
+  let cls, head, sub;
+  if (secsL<=60) {
     cls='soon'; head='Attends la rotation';
-    body=`${next.name} arrive dans ${Math.ceil(secsL)}s.`;
-  } else if (pct >= 72) {
+    sub=`${next.name} dans ${Math.ceil(secsL)}s.`;
+  } else if (pct>=72) {
     cls='wait'; head='Fin de fenêtre';
-    body=`${pad(m)}:${pad(s)} restantes. Lance si tu es rapide.`;
+    sub=`${pad(m)}:${pad(s)} restantes — lance si tu es rapide.`;
   } else {
     cls='go'; head='Lance ta partie';
-    body=`${pad(m)}:${pad(s)} sur ${map.name}.`;
+    sub=`${pad(m)}:${pad(s)} disponibles sur ${map.name}.`;
   }
-  E.advCard.className = `adv-card ${cls}`;
-  E.advH.textContent = head; E.advB.textContent = body;
+  E.adv.className = `advice ${cls}`;
+  E.advH.textContent = head; E.advS.textContent = sub; E.advI.innerHTML = ICONS[cls];
 
-  E.clock.textContent = new Date().toLocaleTimeString(USER_LOCALE);
+  /* Horloge locale */
+  E.clock.textContent = localTime(new Date());
 }
 
-/* ── DURATION ───────────────────────────────────────────────── */
-E.durVal.textContent = ROT_MIN;
+/* ═══════════════════════════════════════
+   DURÉE
+═══════════════════════════════════════ */
+E.dur.textContent = ROT_MIN;
 function changeDur(d) {
-  ROT_MIN = Math.max(5, Math.min(60, ROT_MIN + d));
-  E.durVal.textContent = ROT_MIN;
+  ROT_MIN = Math.max(5, Math.min(60, ROT_MIN+d));
+  E.dur.textContent = ROT_MIN;
+  const fd = G('faqDur'); if(fd) fd.textContent = ROT_MIN;
   localStorage.setItem('rt_dur', ROT_MIN);
   lastSlot = -1; buildSched();
 }
 
-/* ── NOTIFICATIONS ──────────────────────────────────────────── */
+/* ═══════════════════════════════════════
+   NOTIFICATIONS
+═══════════════════════════════════════ */
 function requestNotif() {
-  if (!('Notification' in window)) { E.nStatus.textContent = 'Non supporté par ce navigateur.'; return; }
-  Notification.requestPermission().then(syncNotifUI);
+  if (!('Notification' in window)) {E.nSt.textContent='Non supporté.';return;}
+  Notification.requestPermission().then(p => {
+    if (p==='granted') {G('notifBtn').textContent='Activées ✓';G('notifBtn').disabled=true;syncBtns();}
+    else if (p==='denied') E.nSt.textContent='Bloquées dans le navigateur.';
+  });
 }
 function toggleAlert(id) {
-  if (Notification.permission !== 'granted') { requestNotif(); return; }
-  ALERTS = ALERTS.includes(id) ? ALERTS.filter(a=>a!==id) : [...ALERTS, id];
+  if (Notification.permission!=='granted') {requestNotif();return;}
+  ALERTS = ALERTS.includes(id)?ALERTS.filter(a=>a!==id):[...ALERTS,id];
   localStorage.setItem('rt_alerts', JSON.stringify(ALERTS));
   syncBtns();
 }
 function syncBtns() {
-  G('btnRb').className = 'btn btn-ghost' + (ALERTS.includes('rebirth') ? ' on-rb' : '');
-  G('btnHv').className = 'btn btn-ghost' + (ALERTS.includes('haven')   ? ' on-hv' : '');
-  const a = ALERTS.map(id => MAPS.find(m=>m.id===id)?.name).filter(Boolean);
-  E.nStatus.textContent = a.length ? `Alertes actives : ${a.join(', ')}.` : 'Aucune alerte sélectionnée.';
+  G('btnRb').className='btn btn-ghost'+(ALERTS.includes('rebirth')?' on-rb':'');
+  G('btnHv').className='btn btn-ghost'+(ALERTS.includes('haven')?' on-hv':'');
+  const a=ALERTS.map(id=>MAPS.find(m=>m.id===id)?.name).filter(Boolean);
+  E.nSt.textContent=a.length?`Actives : ${a.join(', ')}.`:'Aucune alerte.';
 }
-function syncNotifUI(perm) {
-  if (perm==='granted') { G('notifBtn').textContent='Notifications activées'; G('notifBtn').disabled=true; syncBtns(); }
-  else if (perm==='denied') E.nStatus.textContent = 'Notifications bloquées. Modifiez les permissions de votre navigateur.';
+if ('Notification' in window && Notification.permission==='granted') {
+  G('notifBtn').textContent='Activées ✓'; G('notifBtn').disabled=true;
 }
-if ('Notification' in window && Notification.permission !== 'default') syncNotifUI(Notification.permission);
 syncBtns();
 
-/* ── MODALS ─────────────────────────────────────────────────── */
-function openModal(n)  { G(n+'Modal').classList.add('open'); }
-function closeModal(n) { G(n+'Modal').classList.remove('open'); }
-document.querySelectorAll('.modal').forEach(m => {
-  m.addEventListener('click', e => { if (e.target===m) m.classList.remove('open'); });
+/* ═══════════════════════════════════════
+   SHARE
+═══════════════════════════════════════ */
+function shareApp() {
+  if (navigator.share) {
+    navigator.share({title:'ResurgenceTimer',text:'Rotation maps Warzone Résurgence en direct',url:'https://resurgencetimer.com'}).catch(()=>{});
+  } else {
+    navigator.clipboard.writeText('https://resurgencetimer.com').then(()=>showToast('Lien copié !'));
+  }
+}
+
+/* ═══════════════════════════════════════
+   TOAST
+═══════════════════════════════════════ */
+function showToast(msg) {
+  const t=G('toast'); t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+/* ═══════════════════════════════════════
+   FAQ
+═══════════════════════════════════════ */
+function toggleFaq(el) {el.classList.toggle('open');}
+
+/* ═══════════════════════════════════════
+   MODALS
+═══════════════════════════════════════ */
+function openModal(n)  {G(n+'Modal').classList.add('open');}
+function closeModal(n) {G(n+'Modal').classList.remove('open');}
+document.querySelectorAll('.modal').forEach(m=>{
+  m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');});
 });
 
-/* ── INIT + LOCALISATION AUTOMATIQUE ───────────────────────────
-   Détecte la langue ET le fuseau horaire du visiteur.
-   Un joueur en France voit 14:32, au Japon 21:32 — le TIMER
-   reste identique car basé sur Date.now() UTC mondial.
-   ─────────────────────────────────────────────────────────────── */
-const USER_LOCALE = navigator.language || 'fr-FR';
-const USER_TZ     = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
-function localTime(date, extra = {}) {
-  return date.toLocaleTimeString(USER_LOCALE, { hour:'2-digit', minute:'2-digit', ...extra });
-}
-
-function tzLabel() {
-  const city = USER_TZ.split('/').pop().replace(/_/g,' ');
-  const off  = -new Date().getTimezoneOffset();
-  const sign = off >= 0 ? '+' : '\u2212';
-  const h    = Math.floor(Math.abs(off) / 60);
-  const mn   = Math.abs(off) % 60;
-  const utc  = mn ? `UTC${sign}${h}:${String(mn).padStart(2,'0')}` : `UTC${sign}${h}`;
-  return `${city} \u00b7 ${utc}`;
-}
-
-E.tz.textContent = tzLabel();
+/* ═══════════════════════════════════════
+   INIT
+═══════════════════════════════════════ */
 G('year').textContent = new Date().getFullYear();
+initTheme();
+syncCountryBtn();
 
-/* Seed history on load */
+/* Seed history */
 (function seed() {
-  const cycle = cycleMs(), now = Date.now(), cur = Math.floor(now / cycle);
-  for (let i = 2; i >= 0; i--) {
-    const si = cur - i;
-    const mi = ((si % MAPS.length) + MAPS.length) % MAPS.length;
-    sessionHist.push({ map:MAPS[mi], time:new Date(si * cycle) });
+  const cycle=cycleMs(), now=Date.now(), cur=Math.floor(now/cycle);
+  for (let i=2;i>=0;i--) {
+    const si=cur-i, mi=((si%MAPS.length)+MAPS.length)%MAPS.length;
+    hist.push({map:MAPS[mi],time:new Date(si*cycle)});
   }
   renderHist();
 })();
@@ -1033,93 +1270,68 @@ update();
 setInterval(update, 500);
 setInterval(buildSched, 30_000);
 
-/* ══════════════════════════════════════════════════════════════
+/* ═══════════════════════════════════════
    PICTURE-IN-PICTURE
-   Fenêtre flottante canvas → reste visible par-dessus le jeu.
-   Chrome 70+ / Edge 79+ / Safari 14+
-   ══════════════════════════════════════════════════════════════ */
-let _pipCanvas, _pipCtx, _pipVideo, _pipTick, _pipOn = false;
+═══════════════════════════════════════ */
+let _c,_ctx,_v,_tick,_on=false;
 
 function initPiP() {
-  const ok = document.pictureInPictureEnabled;
-  const btn = G('pipStartBtn'), st = G('pipStatus');
-  if (ok) { btn.disabled = false; st.textContent = 'Compatible. Cliquez pour ouvrir la fenêtre flottante.'; }
-  else    { btn.disabled = true;  st.textContent = 'Non disponible sur ce navigateur (Chrome, Edge ou Safari 14+ requis).'; }
+  if (!document.pictureInPictureEnabled) G('pipBtn').style.display='none';
 }
 
-async function startPiP() {
-  if (!document.pictureInPictureEnabled || _pipOn) return;
-  _pipCanvas = document.createElement('canvas');
-  _pipCanvas.width = 320; _pipCanvas.height = 180;
-  _pipCtx  = _pipCanvas.getContext('2d');
-  _pipVideo = document.createElement('video');
-  _pipVideo.muted = true;
-  _pipVideo.srcObject = _pipCanvas.captureStream(2);
-  _pipVideo.addEventListener('leavepictureinpicture', () => {
-    _pipOn = false; clearInterval(_pipTick);
-    G('pipStartBtn').style.display = '';
-    G('pipStopBtn').style.display  = 'none';
-    const s = G('pipStatus'); s.textContent = 'Fenêtre fermée.'; s.classList.remove('active');
+async function togglePiP() {
+  if (_on) {stopPiP();return;}
+  if (!document.pictureInPictureEnabled) return;
+  _c=document.createElement('canvas');_c.width=320;_c.height=180;
+  _ctx=_c.getContext('2d');
+  _v=document.createElement('video');_v.muted=true;_v.srcObject=_c.captureStream(2);
+  _v.addEventListener('leavepictureinpicture',()=>{
+    _on=false;clearInterval(_tick);
+    G('pipBtn').classList.remove('active');
+    G('pipBtn').innerHTML=`<svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="1" y="2" width="14" height="10" rx="1.5"/><rect x="8" y="7" width="6" height="4" rx="1" fill="currentColor" stroke="none"/></svg> OVERLAY`;
   });
   drawPiP();
   try {
-    await _pipVideo.play();
-    await _pipVideo.requestPictureInPicture();
-    _pipOn  = true; _pipTick = setInterval(drawPiP, 500);
-    G('pipStartBtn').style.display = 'none';
-    G('pipStopBtn').style.display  = '';
-    const s = G('pipStatus'); s.textContent = 'Fenêtre flottante active — minimisez cet onglet.'; s.classList.add('active');
-  } catch(e) {
-    G('pipStatus').textContent = 'Erreur — interagissez d\'abord avec la page puis réessayez.';
-  }
+    await _v.play(); await _v.requestPictureInPicture();
+    _on=true;_tick=setInterval(drawPiP,500);
+    G('pipBtn').classList.add('active');
+    G('pipBtn').innerHTML=`<svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="1" y="2" width="14" height="10" rx="1.5"/><rect x="8" y="7" width="6" height="4" rx="1" fill="currentColor" stroke="none"/></svg> ACTIF`;
+  } catch(e) {showToast('Interagis d\'abord avec la page.');}
 }
-
-function stopPiP() {
-  if (document.pictureInPictureElement) document.exitPictureInPicture();
-}
-
-function drawPiP() {
-  if (!_pipCtx) return;
-  const slot  = getSlot(), secsL = getSecsL();
-  const map   = MAPS[slot], next = MAPS[(slot+1) % MAPS.length];
-  const m = Math.floor(secsL/60), s = Math.floor(secsL%60);
-  const pad   = n => String(Math.floor(n)).padStart(2,'0');
-  const W=320, H=180, ctx=_pipCtx;
-  const col  = map.id==='rebirth' ? '#35d474' : '#c4a46a';
-  const tcol = secsL<=30 ? '#e04a3a' : secsL<=120 ? '#e9a520' : '#edf1f8';
-
-  ctx.fillStyle='#07090f'; ctx.fillRect(0,0,W,H);
-  /* Left bar */
-  ctx.fillStyle=col; ctx.fillRect(0,0,3,H);
-  /* Grid */
-  ctx.strokeStyle='rgba(255,255,255,.022)'; ctx.lineWidth=1;
-  for(let x=0;x<W;x+=28){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
-  for(let y=0;y<H;y+=28){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
-  /* Logo */
-  ctx.fillStyle='#2a3450'; ctx.font='700 9px monospace'; ctx.textAlign='left';
-  ctx.fillText('RESURGENCETIMER.COM', 12, 18);
-  ctx.textAlign='right'; ctx.fillStyle='#38485e'; ctx.fillText('RÉSURGENCE', W-10, 18);
-  /* Map name */
-  ctx.fillStyle=col; ctx.font='bold 20px sans-serif'; ctx.textAlign='left';
-  ctx.fillText(map.name.toUpperCase(), 12, 54);
-  /* Divider */
-  ctx.fillStyle='#181e2e'; ctx.fillRect(12,60,W-24,1);
-  /* Timer label */
-  ctx.fillStyle='#38485e'; ctx.font='600 9px monospace'; ctx.fillText('PROCHAIN CHANGEMENT', 12, 78);
-  /* Timer */
-  if(secsL<=30){ctx.shadowColor='#e04a3a';ctx.shadowBlur=14;}
-  ctx.fillStyle=tcol; ctx.font='bold 54px monospace'; ctx.textAlign='left';
-  ctx.fillText(`${pad(m)}:${pad(s)}`, 7, 145);
+function stopPiP(){if(document.pictureInPictureElement)document.exitPictureInPicture();}
+function drawPiP(){
+  if(!_ctx)return;
+  const slot=getSlot(),secsL=getSecsL();
+  const map=MAPS[slot],next=MAPS[(slot+1)%MAPS.length];
+  const m=Math.floor(secsL/60),s=Math.floor(secsL%60);
+  const pad=n=>String(Math.floor(n)).padStart(2,'0');
+  const W=320,H=180,ctx=_ctx;
+  const col=map.id==='rebirth'?'#2ee87a':'#c4a46a';
+  const tc=secsL<=30?'#e84040':secsL<=120?'#f0a820':'#edf2fa';
+  ctx.fillStyle='#060810';ctx.fillRect(0,0,W,H);
+  ctx.fillStyle=col;ctx.fillRect(0,0,3,H);
+  ctx.strokeStyle='rgba(255,255,255,.018)';ctx.lineWidth=1;
+  for(let x=0;x<W;x+=30){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for(let y=0;y<H;y+=30){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+  ctx.fillStyle='#2c3a50';ctx.font='700 9px monospace';ctx.textAlign='left';
+  ctx.fillText('RESURGENCETIMER.COM',12,16);
+  ctx.fillStyle=col;ctx.font='bold 20px sans-serif';
+  ctx.fillText(map.name.toUpperCase(),12,50);
+  ctx.fillStyle='#161c30';ctx.fillRect(12,56,W-24,1);
+  ctx.fillStyle='#2c3a50';ctx.font='700 9px monospace';
+  ctx.fillText('PROCHAIN CHANGEMENT DANS',12,74);
+  if(secsL<=30){ctx.shadowColor='#e84040';ctx.shadowBlur=12;}
+  ctx.fillStyle=tc;ctx.font='bold 52px monospace';ctx.textAlign='left';
+  ctx.fillText(`${pad(m)}:${pad(s)}`,7,138);
   ctx.shadowBlur=0;
-  /* Progress */
-  const pW=W-24, fl=Math.min((1-secsL/(ROT_MIN*60))*pW,pW);
-  ctx.fillStyle='#181e2e'; ctx.fillRect(12,152,pW,3);
-  ctx.fillStyle=tcol; ctx.fillRect(12,152,fl,3);
-  /* Next */
-  ctx.fillStyle='#38485e'; ctx.font='600 9px monospace'; ctx.textAlign='right';
-  ctx.fillText(`NEXT: ${next.name.toUpperCase()}`, W-10, 170);
+  const pW=W-24,fl=Math.min((1-secsL/(ROT_MIN*60))*pW,pW);
+  ctx.fillStyle='#161c30';ctx.fillRect(12,148,pW,2);
+  ctx.fillStyle=tc;ctx.fillRect(12,148,fl,2);
+  ctx.fillStyle='#2c3a50';ctx.font='700 9px monospace';ctx.textAlign='right';
+  ctx.fillText(`NEXT : ${next.name.toUpperCase()}`,W-10,165);
+  ctx.fillStyle='rgba(255,255,255,.15)';ctx.font='600 8px monospace';ctx.textAlign='center';
+  ctx.fillText(localTime(new Date()),W/2,178);
 }
-
 initPiP();
 </script>
 
